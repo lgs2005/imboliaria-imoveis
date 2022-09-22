@@ -1,4 +1,8 @@
-from init import app, db, jwt
+from init import db, jwt
+
+
+def extract_fields(*fields: 'str'):
+    return lambda self: {field: self.__getattribute__(field) for field in fields}
 
 
 class Usuario(db.Model):
@@ -9,10 +13,7 @@ class Usuario(db.Model):
     senha_hash = db.Column(db.String(254), nullable=False)
     telefone = db.Column(db.String(20), nullable=False)
 
-    def json(self):
-        return {
-
-        }
+    json = extract_fields('id', 'nome', 'email', 'cpf', 'telefone')
 
 
 class Imovel(db.Model):
@@ -26,32 +27,16 @@ class Imovel(db.Model):
     mobiliado = db.Column(db.Boolean, nullable=False)
     area = db.Column(db.Integer, nullable=False)
 
-    venda = db.relationship('Venda')
-
-    def json(self):
-        return {
-
-        }
-
-
-# class Casa(Imovel):
-#     pass
-
-
-# class Apartamento(Imovel):
-#     pass
+    json = extract_fields('id', 'nome', 'descricao', 'localizacao',
+                          'preco', 'aluguel', 'mobilizado', 'area')
 
 
 class Venda(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    imovel_id = db.Column(db.Integer, db.ForeignKey(
+        Imovel.id), primary_key=True)
+    imovel = db.relationship('Imovel')
 
-    comprador_id = db.Column(db.Integer)
-    comprador = db.relationship('Usuario')
+    comprador_id = db.Column(db.Integer, db.ForeignKey(Usuario.id))
+    comprador = db.relationship('Usuario', backref='vendas')
 
-    imovel_id = db.Column(db.Integer)
-    imovel = db.relationship(Imovel)
-
-    def json(self):
-        return {
-
-        }
+    json = extract_fields('imovel_id', 'comprador_id')

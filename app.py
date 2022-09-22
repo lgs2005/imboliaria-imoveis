@@ -1,5 +1,6 @@
 from init import app, db
 
+import modelos
 
 @app.route('/', methods=['GET'])
 def rota_inicial():
