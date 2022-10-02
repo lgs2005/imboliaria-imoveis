@@ -1,45 +1,101 @@
 from init import db
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 
 
-def extract_fields(*fields: 'str'):
-    return lambda self: {field: self.__getattribute__(field) for field in fields}
+class Cliente(db.Model):
+    '''Representa um cliente'''
+    id = Column(Integer, primary_key=True)
 
-
-class Usuario(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-
-    nome = db.Column(db.String(254), nullable=False)
-    email = db.Column(db.String(254), nullable=False)
-    cpf = db.Column(db.String(11), nullable=False)
-    telefone = db.Column(db.String(20), nullable=False)
-
-    senha_hash = db.Column(db.String(254), nullable=False)
-
-    dados = extract_fields('id', 'nome', 'email', 'cpf', 'telefone')
+    nome = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=False, unique=True)
+    cpf = Column(String(11), nullable=False, unique=True)
+    telefone = Column(String(20), nullable=False, unique=True)
+    hash_senha = Column(String(60), nullable=False)
 
 
 class Imovel(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    '''Representa os dados de um imóvel'''
+    id = Column(Integer, primary_key=True)
 
-    nome = db.Column(db.String(254), nullable=False)
-    descricao = db.Column(db.String(800), nullable=False)
-    localizacao = db.Column(db.String(254), nullable=False)
-    preco = db.Column(db.Integer, nullable=False)
+    nome = Column(String(255), nullable=False)
+    descricao = Column(String(1000), nullable=False)
+    local = Column(String(255), nullable=False)
+    area = Column(Integer, nullable=False)
 
-    aluguel = db.Column(db.Boolean, nullable=False)
-    mobiliado = db.Column(db.Boolean, nullable=False)
-    area = db.Column(db.Integer, nullable=False)
-
-    dados = extract_fields('id', 'nome', 'descricao', 'localizacao',
-                           'preco', 'aluguel', 'mobilizado', 'area')
+    venda = db.relationship('Venda', back_populates='imovel', uselist=False)
 
 
-class Compra(db.Model):
-    imovel_id = db.Column(db.Integer, db.ForeignKey(
-        Imovel.id), primary_key=True)
-    imovel = db.relationship('Imovel')
+class Venda(db.Model):
+    '''Representa a venda de um imóvel'''
+    id = Column(ForeignKey(Imovel.id), primary_key=True)
 
-    comprador_id = db.Column(db.Integer, db.ForeignKey(Usuario.id))
-    comprador = db.relationship('Usuario')
+    imovel = db.relationship(Imovel, back_populates='venda', uselist=False)
+    preco = Column(Integer, nullable=False)
 
-    dados = extract_fields('imovel_id', 'comprador_id')
+    tipo = Column(String(20))
+    __mapper_args__ = {
+        'polymorphic_on': tipo,
+        'polymorphic_identity': 'venda'
+    }
+
+
+class VendaRealizada(Venda):
+    '''Uma venda que foi realizada'''
+    __mapper_args__ = {
+        'polymorphic_identity': 'realizada'
+    }
+
+    data = Column(DateTime, nullable=False)
+
+    cliente_id = Column(ForeignKey(Cliente.id))
+    cliente = db.relationship(Cliente)
+
+
+class VendaAlugel(Venda):
+    '''Venda através de alugeis'''
+    __mapper_args__ = {
+        'polymorphic_identity': 'alugel'
+    }
+
+    alugado = Column(Boolean, nullable=False)
+    alugeis = db.relationship('alugeis', back_populates='venda')
+
+
+class Alugel(db.Model):
+    '''Um alugel realizado'''
+    id = Column(Integer, primary_key=True)
+
+    venda_id = Column(ForeignKey(VendaAlugel.id))
+    venda = db.relationship(VendaAlugel, back_populates='alugeis')
+
+    cliente_id = Column(ForeignKey(Cliente.id))
+    cliente = db.relationship(Cliente)
+
+    data = Column(DateTime, nullable=False)
+    data_fim = Column(DateTime, nullable=False)
+
+
+class VendaLeilao(Venda):
+    '''Venda através de leilao'''
+    __mapper_args__ = {
+        'polymorphic_identity': 'leilao'
+    }
+
+    data_fim = Column(DateTime, nullable=False)
+    apostas = db.relationship('Aposta', back_populates='venda')
+
+    vencedor_id = Column(ForeignKey('aposta.id'), nullable=True)
+    vencedor = db.relationship('Aposta')
+
+
+class Aposta(db.Model):
+    '''Aposta feita em um leilao'''
+    id = Column(Integer, primary_key=True)
+
+    cliente_id = Column(ForeignKey(Cliente.id))
+    cliente = db.relationship(Cliente)
+
+    leilao_id = Column(ForeignKey(VendaLeilao.id))
+    leilao = db.relationship(VendaLeilao, back_populates='apostas')
+
+    valor = Column(Integer, nullable=False)
