@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
-from init import app, NOME_PROJETO
+
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped
 
+from init import NOME_PROJETO, app
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{NOME_PROJETO}.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -13,7 +14,6 @@ if TYPE_CHECKING:
     import flask_sqlalchemy
     import sqlalchemy
     import sqlalchemy.orm
-
     from typing_extensions import Self
 
     class Model(flask_sqlalchemy.Model):

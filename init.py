@@ -1,26 +1,9 @@
 from datetime import timedelta
-from typing import TYPE_CHECKING
 
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
 
-if TYPE_CHECKING:
-    import flask_sqlalchemy
-    import sqlalchemy
-    import sqlalchemy.orm
-
-    from typing_extensions import Self
-
-    class Model(flask_sqlalchemy.Model):
-        query: flask_sqlalchemy.BaseQuery[Self]
-
-    class Database(flask_sqlalchemy.SQLAlchemy):
-        Model: type[Model]
-        relationship: type[sqlalchemy.orm.relationship]
-
-    db: Database
 
 NOME_PROJETO = 'imboliahria'
 
