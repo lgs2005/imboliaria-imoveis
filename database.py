@@ -28,6 +28,9 @@ if TYPE_CHECKING:
 db = SQLAlchemy(app)
 db.session.execute('PRAGMA FOREIGN_KEYS=ON')
 
+def extrair_dados(*campos: str):
+    return lambda self: { c: self.__getattribute__(c) for c in campos }
+
 
 class Cliente(db.Model):
     '''Representa um cliente''' 
@@ -37,8 +40,9 @@ class Cliente(db.Model):
     email:          Mapped[str]             = Column(String(255), nullable=False, unique=True)
     cpf:            Mapped[str]             = Column(String(11), nullable=False, unique=True)
     telefone:       Mapped[str]             = Column(String(20), nullable=False, unique=True)
-    hash_senha:     Mapped[str]             = Column(String(60), nullable=False)
+    senha:          Mapped[str]             = Column(String(60), nullable=False)
 
+    dados = extrair_dados('nome', 'email', 'cpf', 'telefone')
 
 class Imovel(db.Model):
     '''Representa os dados de um imóvel'''
@@ -78,7 +82,7 @@ class VendaRealizada(Venda):
     cliente_id:     Mapped[int]             = Column(ForeignKey(Cliente.id))
     cliente:        Mapped[Cliente]         = db.relationship(Cliente)
 
-    data:           Mapped[datetime]        = Column(DateTime, nullable=False)
+    data:           Mapped[datetime]        = Column(DateTime)
 
 
 class VendaAlugel(Venda):
@@ -88,8 +92,8 @@ class VendaAlugel(Venda):
         'polymorphic_identity': 'alugel'
     }
 
-    alugado:        Mapped[bool]            = Column(Boolean, nullable=False)
-    alugeis:        Mapped[list['Alugel']]  = db.relationship('alugeis', back_populates='venda')
+    alugado:        Mapped[bool]            = Column(Boolean)
+    alugeis:        Mapped[list['Alugel']]  = db.relationship('Alugel', back_populates='venda')
 
 
 class Alugel(db.Model):
@@ -114,11 +118,11 @@ class VendaLeilao(Venda):
         'polymorphic_identity': 'leilao'
     }
 
-    data_fim:       Mapped[datetime]        = Column(DateTime, nullable=False)
-    apostas:        Mapped[list['Aposta']]  = db.relationship('Aposta', back_populates='venda')
+    data_fim:       Mapped[datetime]        = Column(DateTime)
+    apostas:        Mapped[list['Aposta']]  = db.relationship('Aposta', back_populates='leilao', foreign_keys='Aposta.leilao_id')
 
     vencedor_id:    Mapped[int]             = Column(ForeignKey('aposta.id'), nullable=True)
-    vencedor:       Mapped['Aposta']        = db.relationship('Aposta')
+    vencedor:       Mapped['Aposta']        = db.relationship('Aposta', foreign_keys=vencedor_id)
 
 
 class Aposta(db.Model):
@@ -130,7 +134,7 @@ class Aposta(db.Model):
     cliente:        Mapped[Cliente]         = db.relationship(Cliente)
 
     leilao_id:      Mapped[int]             = Column(ForeignKey(VendaLeilao.id))
-    leilao:         Mapped[VendaLeilao]     = db.relationship(VendaLeilao, back_populates='apostas')
+    leilao:         Mapped[VendaLeilao]     = db.relationship(VendaLeilao, back_populates='apostas', foreign_keys=leilao_id)
 
     valor:          Mapped[int]             = Column(Integer, nullable=False)
     data:           Mapped[datetime]        = Column(DateTime, nullable=False)
