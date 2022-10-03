@@ -93,7 +93,7 @@ class VendaAlugel(Venda):
     }
 
     alugado:        Mapped[bool]            = Column(Boolean)
-    alugeis:        Mapped[list['Alugel']]  = db.relationship('Alugel', back_populates='venda')
+    alugeis:        'Mapped[list[Alugel]]'  = db.relationship('Alugel', back_populates='venda')
 
 
 class Alugel(db.Model):
@@ -119,7 +119,7 @@ class VendaLeilao(Venda):
     }
 
     data_fim:       Mapped[datetime]        = Column(DateTime)
-    apostas:        Mapped[list['Aposta']]  = db.relationship('Aposta', back_populates='leilao', foreign_keys='Aposta.leilao_id')
+    apostas:        'Mapped[list[Aposta]]'  = db.relationship('Aposta', back_populates='leilao', foreign_keys='Aposta.leilao_id')
 
     vencedor_id:    Mapped[int]             = Column(ForeignKey('aposta.id'), nullable=True)
     vencedor:       Mapped['Aposta']        = db.relationship('Aposta', foreign_keys=vencedor_id)

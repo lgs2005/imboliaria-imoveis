@@ -7,7 +7,7 @@ from flask import abort, request, jsonify
 FieldsType = TypeVar('FieldsType')
 
 
-def get_json_fields(typing: type[FieldsType], *fields: str) -> tuple[FieldsType, ...]:
+def get_json_fields(typing: 'type[FieldsType]', *fields: str) -> 'tuple[FieldsType, ...]':
     json = request.get_json()
 
     if not isinstance(json, dict):
