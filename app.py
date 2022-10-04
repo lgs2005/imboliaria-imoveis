@@ -7,6 +7,9 @@ from database import db
 import database
 import cliente
 
+db.init_app(app)
+db.session.execute('PRAGMA FOREIGN_KEYS=ON')
+
 @app.route('/', methods=['GET'])
 def rota_inicial():
     return render_template('index.html')
