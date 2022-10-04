@@ -103,7 +103,7 @@ def inserir_objetos():
 
     venda_leilao = VendaLeilao(
         imovel=imovel4,
-        preco=800,  # preco inicial, Apenas A Ganancia Do Ser Humano Ira Tornar Este Valor Maior
+        preco=800,  # preco inicial
         data_fim=datetime.utcnow(),
     )
 
