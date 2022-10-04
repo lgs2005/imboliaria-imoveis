@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped
 
 if TYPE_CHECKING:
@@ -38,6 +38,7 @@ class Cliente(db.Model):
 
     dados = extrair_dados('nome', 'email', 'cpf', 'telefone')
 
+
 class Imovel(db.Model):
     '''Representa os dados de um imóvel'''
 
@@ -49,6 +50,7 @@ class Imovel(db.Model):
     area:           Mapped[int]             = Column(Integer, nullable=False)
 
     venda:          Mapped['Venda']         = db.relationship('Venda', back_populates='imovel', uselist=False)
+    imagens:        Mapped['list[Imagem]']  = db.relationship('Imagem', back_populates='imovel')
 
 
 class Venda(db.Model):
@@ -132,3 +134,15 @@ class Aposta(db.Model):
 
     valor:          Mapped[int]             = Column(Integer, nullable=False)
     data:           Mapped[datetime]        = Column(DateTime, nullable=False)
+
+
+class Imagem(db.Model):
+    id: Mapped[int] = Column(Integer, primary_key=True)
+    nome: Mapped[str] = Column(Text, nullable=False)
+
+    imovel_id: Mapped[int] = Column(ForeignKey(Imovel.id))
+    imovel = db.relationship(Imovel, back_populates='imagens')
+
+    def arquivo():
+        '''Esta função irá retornar o arquivo que contém esta imagem'''
+        pass
