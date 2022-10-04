@@ -1,0 +1,74 @@
+@startuml
+
+class Cliente {
+nome: str
+email: str
+cpf: str
+telefone: str
+senha: str
+}
+
+class Imovel {
+id: int
+nome: str
+descricao: str
+local: str
+area: int
+venda: Venda?
+imagens: list[Imagem]
+}
+
+Imovel *-- Venda
+class Venda {
+imovel: Imovel
+preco: int
+tipo: str
+}
+
+Venda <|-- VendaRealizada
+Cliente *-- VendaRealizada
+class VendaRealizada {
+cliente: Cliente
+data: datetime
+}
+
+Venda <|-- VendaAlugel
+class VendaAlugel {
+alugado: bool
+alugeis: list[Alugel]
+}
+
+VendaAlugel *-- Alugel
+Cliente *-- Alugel
+class Alugel {
+venda: VendaAlugel
+cliente: Cliente
+data: datetime
+data_fim: datetime
+}
+
+Venda <|-- VendaLeilao
+class VendaLeilao {
+data_fim: datetime
+apostas: list[Aposta]
+vencedor: Aposta?
+}
+
+VendaLeilao *-- Aposta
+Cliente *-- Aposta
+class Aposta {
+cliente: Cliente
+leilao: VendaLeilao
+valor: int
+data: datetime
+}
+
+Imovel *-- Imagem
+class Imagem {
+nome: str
+imovel: Imovel
+}
+
+
+
+@enduml
