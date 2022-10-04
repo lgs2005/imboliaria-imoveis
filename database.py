@@ -36,6 +36,8 @@ class Cliente(db.Model):
     telefone:       Mapped[str]             = Column(String(20), nullable=False, unique=True)
     senha:          Mapped[str]             = Column(String(60), nullable=False)
 
+    admin:          Mapped[bool]            = Column(Boolean, default=False)
+
     dados = extrair_dados('nome', 'email', 'cpf', 'telefone')
 
 
