@@ -140,11 +140,7 @@ class Aposta(db.Model):
 
 class Imagem(db.Model):
     id: Mapped[int] = Column(Integer, primary_key=True)
-    nome: Mapped[str] = Column(Text, nullable=False)
+    arquivo: Mapped[str] = Column(String(32), nullable=False, unique=True)
 
     imovel_id: Mapped[int] = Column(ForeignKey(Imovel.id))
     imovel = db.relationship(Imovel, back_populates='imagens')
-
-    def arquivo():
-        '''Esta função irá retornar o arquivo que contém esta imagem'''
-        pass

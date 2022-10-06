@@ -1,0 +1,7 @@
+parametros para listar vendas:
+    preco: minimo, maximo
+    alugel, leilao ou normal
+
+    local ???? complicado esse
+        - como formatar o local ?
+        
