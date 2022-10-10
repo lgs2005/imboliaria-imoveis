@@ -1,100 +1,37 @@
-from flask import render_template
-
-from init import app
-from database import db
-
-# imports para registrar no aplicativo
-import database
-import cliente
-
-db.init_app(app)
-db.session.execute('PRAGMA FOREIGN_KEYS=ON')
-
-@app.route('/', methods=['GET'])
-def rota_inicial():
-    return render_template('index.html')
+from datetime import timedelta
+from flask import Flask
 
 
-@app.route('/sobre', methods=['GET'])
-def rota_pagina_sobre():
-    return render_template('sobre.html')
+from modelo import db
+import blueprints.cliente
+import blueprints.pages
+import blueprints.imagem
 
 
-@app.route('/contato', methods=['GET'])
-def rota_pagina_contato():
-    return render_template('contato.html')
+def create_app():
+    app = Flask(__name__)
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///database.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    app.config['JWT_SECRET_KEY'] = 'b25aeed15e1a4f3e9837125d8a815b86-casanapraia-2c040adb0beb40cebf4af3276028acee'
+    app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
+
+    db.init_app(app)
+
+    with app.app_context():
+        db.session.execute('PRAGMA FOREIGN_KEYS=ON')
+
+    blueprints.cliente.jwt.init_app(app)
+
+    app.register_blueprint(blueprints.cliente.bp)
+    app.register_blueprint(blueprints.pages.bp)
+    app.register_blueprint(blueprints.imagem.bp)
+
+    return app
 
 
 if __name__ == '__main__':
-    db.create_all()
-
-    # # cliente = Cliente(
-    # #     nome='lucas',
-    # #     email='email',
-    # #     cpf='01158932521',
-    # #     telefone='047992176139',
-    # #     senha='ok'
-    # # )
-
-    # cliente = Cliente.query.get(1)
-
-    # imovel = Imovel(
-    #     nome='teste',
-    #     descricao='teste',
-    #     local='teste',
-    #     area=200
-    # )
-
-    # # venda = Venda(
-    # #     imovel=imovel,
-    # #     preco=200,
-    # # )
-
-    # # venda = VendaAlugel(
-    # #     imovel=imovel,
-    # #     preco=2000,
-    # #     alugado=False,
-    # # )
-
-    # venda = VendaLeilao(
-    #     imovel=imovel,
-    #     preco=2000,
-    #     data_fim=datetime.now(),
-    # )
-
-    # aposta1 = Aposta(
-    #     leilao=venda,
-    #     cliente=cliente,
-    #     valor=5000,
-    #     data=datetime.now(),
-    # )
-
-    # aposta2 = Aposta(
-    #     leilao=venda,
-    #     cliente=cliente,
-    #     valor=8000,
-    #     data=datetime.now(),
-    # )
-
-
-    # # alugel = Alugel(
-    # #     venda=venda,
-    # #     cliente=cliente,
-    # #     data=datetime.utcnow(),
-    # #     data_fim=datetime.now(timezone.utc) + timedelta(days=30)
-    # # )
-
-    # # alugel2 = Alugel(
-    # #     venda=venda,
-    # #     cliente=cliente,
-    # #     data=datetime.utcnow(),
-    # #     data_fim=datetime.now(timezone.utc) + timedelta(days=30)
-    # # )
-
-
-    # db.session.add_all([imovel, venda, aposta1, aposta2])
-    # db.session.commit()
-
-    # print(venda)
-    # print(venda.apostas)
-    # print(aposta1.leilao)
+    with create_app().app_context():
+        db.create_all()

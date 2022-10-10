@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from flask import send_file
 
-from database import Imagem
+from modelo import Imagem
 
 
 this_folder = os.path.dirname(os.path.abspath(__name__))

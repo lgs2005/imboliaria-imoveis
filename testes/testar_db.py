@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 
-from database import (Alugel, Aposta, Cliente, Imovel, Venda, VendaAlugel,
+from modelo import (Alugel, Aposta, Cliente, Imovel, Venda, VendaAlugel,
                       VendaLeilao, VendaRealizada, db)
 from flask import Flask
 

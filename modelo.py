@@ -2,7 +2,8 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text
+from flask_jwt_extended import current_user
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped
 
 if TYPE_CHECKING:
@@ -22,6 +23,7 @@ if TYPE_CHECKING:
 
 db = SQLAlchemy()
 
+
 def extrair_dados(*campos: str):
     return lambda self: { c: self.__getattribute__(c) for c in campos }
 
@@ -39,6 +41,7 @@ class Cliente(db.Model):
     admin:          Mapped[bool]            = Column(Boolean, default=False)
 
     dados = extrair_dados('nome', 'email', 'cpf', 'telefone')
+    #atual: 'Cliente' = current_user
 
 
 class Imovel(db.Model):
