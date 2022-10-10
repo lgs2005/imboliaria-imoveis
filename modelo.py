@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import current_user
+from flask_jwt_extended import get_current_user
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped
 
@@ -13,11 +13,11 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
     class Model(flask_sqlalchemy.Model):
-        query: flask_sqlalchemy.BaseQuery[Self]
+        query: 'flask_sqlalchemy.BaseQuery[Self]'
 
     class Database(flask_sqlalchemy.SQLAlchemy):
-        Model: type[Model]
-        relationship: type[sqlalchemy.orm.relationship]
+        Model: 'type[Model]'
+        relationship: 'type[sqlalchemy.orm.relationship]'
 
     db: Database
 
@@ -41,7 +41,7 @@ class Cliente(db.Model):
     admin:          Mapped[bool]            = Column(Boolean, default=False)
 
     dados = extrair_dados('nome', 'email', 'cpf', 'telefone')
-    #atual: 'Cliente' = current_user
+    atual = lambda: get_current_user()
 
 
 class Imovel(db.Model):
