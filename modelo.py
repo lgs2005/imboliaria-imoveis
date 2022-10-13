@@ -51,8 +51,12 @@ class Imovel(db.Model):
 
     nome:           Mapped[str]             = Column(String(255), nullable=False)
     descricao:      Mapped[str]             = Column(String(1000), nullable=False)
-    local:          Mapped[str]             = Column(String(255), nullable=False)
+    cidade:         Mapped[str]             = Column(String(255), nullable=False)
+    bairro:         Mapped[str]             = Column(String(255), nullable=False)
     area:           Mapped[int]             = Column(Integer, nullable=False)
+    quartos:        Mapped[int]             = Column(Integer, nullable=False)
+    apartamento:    Mapped[bool]            = Column(Boolean, nullable=False)
+    quintal:        Mapped[bool]            = Column(Boolean, nullable=False)
 
     venda:          Mapped['Venda']         = db.relationship('Venda', back_populates='imovel', uselist=False)
     imagens:        Mapped['list[Imagem]']  = db.relationship('Imagem', back_populates='imovel')
