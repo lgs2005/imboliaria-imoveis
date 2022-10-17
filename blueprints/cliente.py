@@ -62,7 +62,7 @@ def rota_logar_cliente():
 @bp.get('/')
 @jwt_required()
 def rota_retornar_cliente():
-    return jsonify(Cliente.atual.dados())
+    return jsonify(Cliente.atual().dados())
 
 
 @bp.post('/logout')

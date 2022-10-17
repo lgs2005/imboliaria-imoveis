@@ -17,3 +17,8 @@ def page_contato():
 @bp.get('/sobre')
 def page_sobre():
     return render_template('sobre.html')
+
+
+@bp.get('/teste')
+def page_teste():
+    return render_template('testing.html')

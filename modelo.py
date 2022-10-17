@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import get_current_user
@@ -41,8 +41,8 @@ class Cliente(db.Model):
     admin:          Mapped[bool]            = Column(Boolean, default=False)
 
     dados = extrair_dados('nome', 'email', 'cpf', 'telefone')
-    atual = lambda: get_current_user()
-
+    atual: 'Callable[[], Cliente]' = lambda: get_current_user()
+    
 
 class Imovel(db.Model):
     '''Representa os dados de um imóvel'''

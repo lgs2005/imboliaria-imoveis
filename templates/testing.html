@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <form>
+        <input type="file" id="imagem" accept=".png,.jpg">
+        <button id="sendimg">
+            Enviar
+        </button>
+    </form>
+    
+    <script>
+        let img_input = document.getElementById('imagem');
+        let img_button = document.getElementById('sendimg');
+
+        img_button.addEventListener('click', async function(ev) {
+            ev.preventDefault();
+
+            console.log('fuck')
+
+            await fetch(
+                '127.0.0.1:5000/img/5/add',
+                {
+                    method: 'POST',
+                    body: img_input.files[0],
+                }
+            )
+        });
+    </script>
+</body>
+</html>

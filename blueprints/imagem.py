@@ -8,25 +8,25 @@ from modelo import Imagem, Imovel, db
 bp = Blueprint('img', __name__, url_prefix='/img')
 
 
-@bp.post('/<int:id>/add')
-@jwt_required()
+@bp.post('/add')
+#@jwt_required()
 def rota_adicionar_imagem(id:int):
     if 'file' not in request.files:
         abort(BAD_REQUEST)
 
-    imovel: Imovel = Imovel.query.get_or_404(id)
+    #imovel: Imovel = Imovel.query.get_or_404(id)
     img = request.files['file']
     img_name = imagedb.new_entry()
 
     img.save(img_name)
 
-    cadastro = Imagem(
-        imovel=imovel,
-        arquivo=img_name,
-    )
+    # cadastro = Imagem(
+    #     imovel=imovel,
+    #     arquivo=img_name,
+    # )
 
-    db.session.add(cadastro)
-    db.session.commit()
+    # db.session.add(cadastro)
+    # db.session.commit()
 
     return img_name
 
