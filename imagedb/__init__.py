@@ -7,8 +7,7 @@ from flask import send_file
 from modelo import Imagem
 
 
-this_folder = os.path.dirname(os.path.abspath(__name__))
-
+this_folder = os.path.dirname(os.path.abspath(__file__))
 
 def img_exists(name: str):
     return os.path.exists(img_path(name))

@@ -5,32 +5,45 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
 </head>
 <body>
     
-    <form>
-        <input type="file" id="imagem" accept=".png,.jpg">
+    <form id="imageform">
+        <input type="file" id="imagem" accept=".png,.jpg" name="file">
         <button id="sendimg">
             Enviar
         </button>
     </form>
     
     <script>
-        let img_input = document.getElementById('imagem');
-        let img_button = document.getElementById('sendimg');
-
-        img_button.addEventListener('click', async function(ev) {
+        $('#sendimg').on('click', function(ev) {
             ev.preventDefault();
 
-            console.log('fuck')
+            //let img = $('#imagem').get()[0].files[0];
+            //let formData = new FormData();
 
-            await fetch(
-                '127.0.0.1:5000/img/5/add',
-                {
-                    method: 'POST',
-                    body: img_input.files[0],
+            //formData.set('file', img)
+
+            let form = $('#imageform').get(0);
+            let formData = new FormData(form);
+
+            $.ajax({
+                url: '/img/add',
+                method: 'POST',
+                data: formData,
+                contentType: false,          
+                processData: false,
+
+                success: (data) => {
+                    //alert(`ok: ${data}`)
+                },
+
+                error: (err) => {
+                    alert(`error: ${err}`)
                 }
-            )
+            })
         });
     </script>
 </body>
