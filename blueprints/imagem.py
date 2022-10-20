@@ -18,9 +18,19 @@ def rota_adicionar_imagem():
 
     #imovel: Imovel = Imovel.query.get_or_404(id)
     img = request.files['file']
-    img_name = imagedb.new_entry()
+    
+    if '.' not in img.filename:
+        abort(BAD_REQUEST)
 
-    ext = img.filename.split('.', maxsplit=1)[1]
+    ext = img.filename.rsplit('.', 1)[1].lower()
+
+    if ext not in ['png', 'jpg', 'jpeg']:
+        abort(BAD_REQUEST)
+
+
+
+
+    img_name = imagedb.new_entry()
     filename = secure_filename(f'{img_name}.{ext}')
 
     img.save(imagedb.img_path(filename))

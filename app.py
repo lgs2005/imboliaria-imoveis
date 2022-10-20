@@ -11,6 +11,8 @@ import blueprints.imagem
 def create_app():
     app = Flask(__name__)
 
+    app.config['MAX_CONTENT_LENGHT'] = 2 * 1024 * 1024
+
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///database.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
