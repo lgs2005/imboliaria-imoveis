@@ -8,16 +8,18 @@ from sqlalchemy.orm import Mapped
 
 if TYPE_CHECKING:
     import flask_sqlalchemy
+    import flask_sqlalchemy.query
     import sqlalchemy
     import sqlalchemy.orm
     from typing_extensions import Self
 
     class Model(flask_sqlalchemy.Model):
-        query: 'flask_sqlalchemy.BaseQuery[Self]'
+        query: 'flask_sqlalchemy.query.Query[Self]'
 
     class Database(flask_sqlalchemy.SQLAlchemy):
-        Model: 'type[Model]'
+        Model = Model
         relationship: 'type[sqlalchemy.orm.relationship]'
+        session: 'sqlalchemy.orm.scoped_session'
 
     db: Database
 
@@ -61,6 +63,8 @@ class Imovel(db.Model):
     venda:          Mapped['Venda']         = db.relationship('Venda', back_populates='imovel', uselist=False)
     imagens:        Mapped['list[Imagem]']  = db.relationship('Imagem', back_populates='imovel')
 
+    dados = extrair_dados('id', 'nome', 'descricao', 'cidade', 'bairro', 'area', 'quartos', 'apartamento', 'quintal')
+
 
 class Venda(db.Model):
     '''Representa a venda de um imóvel'''
@@ -76,6 +80,8 @@ class Venda(db.Model):
         'polymorphic_identity': 'venda'
     }
 
+    dados = extrair_dados('id', 'preco', 'tipo')
+
 
 class VendaRealizada(Venda):
     '''Uma venda que foi realizada'''
@@ -89,6 +95,8 @@ class VendaRealizada(Venda):
 
     data:           Mapped[datetime]        = Column(DateTime)
 
+    dados = extrair_dados('id', 'preco', 'tipo', 'cliente_id', 'data')
+
 
 class VendaAlugel(Venda):
     '''Venda através de alugeis'''
@@ -99,6 +107,9 @@ class VendaAlugel(Venda):
 
     alugado:        Mapped[bool]            = Column(Boolean)
     alugeis:        'Mapped[list[Alugel]]'  = db.relationship('Alugel', back_populates='venda')
+
+    dados = extrair_dados('id', 'preco', 'tipo', 'alugado')
+
 
 
 class Alugel(db.Model):
@@ -128,6 +139,8 @@ class VendaLeilao(Venda):
 
     vencedor_id:    Mapped[int]             = Column(ForeignKey('aposta.id'), nullable=True)
     vencedor:       Mapped['Aposta']        = db.relationship('Aposta', foreign_keys=vencedor_id)
+    
+    dados = extrair_dados('id', 'preco', 'tipo', 'data_fim', 'vencedor_id')
 
 
 class Aposta(db.Model):
