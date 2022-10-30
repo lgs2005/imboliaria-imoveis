@@ -6,15 +6,20 @@ email: str
 cpf: str
 telefone: str
 senha: str
+admin: bool
 }
 
 class Imovel {
 id: int
 nome: str
 descricao: str
-local: str
+cidade: str
+bairro: str
 area: int
-venda: Venda?
+quartos: int
+apartamento: bool
+quintal: bool
+venda: Venda | None
 imagens: list[Imagem]
 }
 
@@ -47,28 +52,11 @@ data: datetime
 data_fim: datetime
 }
 
-Venda <|-- VendaLeilao
-class VendaLeilao {
-data_fim: datetime
-apostas: list[Aposta]
-vencedor: Aposta?
-}
-
-VendaLeilao *-- Aposta
-Cliente *-- Aposta
-class Aposta {
-cliente: Cliente
-leilao: VendaLeilao
-valor: int
-data: datetime
-}
-
 Imovel *-- Imagem
 class Imagem {
-nome: str
+id: int
+arquivo: str
 imovel: Imovel
 }
-
-
 
 @enduml

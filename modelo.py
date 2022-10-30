@@ -51,8 +51,8 @@ class Imovel(db.Model):
     apartamento:    Mapped[bool]            = Column(Boolean, nullable=False)
     quintal:        Mapped[bool]            = Column(Boolean, nullable=False)
 
-    venda:          Mapped['Venda']         = db.relationship('Venda', back_populates='imovel', uselist=False)
-    imagens:        Mapped['list[Imagem]']  = db.relationship('Imagem', back_populates='imovel')
+    venda:          'Mapped[Venda | None]'         = db.relationship('Venda', back_populates='imovel', uselist=False)
+    imagens:        'Mapped[list[Imagem]]'  = db.relationship('Imagem', back_populates='imovel')
 
     dados = extrair_dados('id', 'nome', 'descricao', 'cidade', 'bairro', 'area', 'quartos', 'apartamento', 'quintal')
 
