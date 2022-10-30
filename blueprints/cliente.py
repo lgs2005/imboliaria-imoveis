@@ -12,6 +12,7 @@ from utils import get_json_fields, res_erro, res_sucesso
 bp = Blueprint('cliente', __name__, url_prefix='/api/cliente')
 
 
+# curl -H "Content-Type: application/json" -d "{\"nome\": \"teste\", \"email\": \"email123@hotmail.com\", \"cpf\": \"12345678913\", \"telefone\": \"047158963289\", \"senha\": \"teste\"}" 127.0.0.1:5000/api/cliente/registrar
 @bp.post('/registrar')
 def route_registrar_cliente():
     nome, email, cpf, telefone, senha = get_json_fields(
@@ -44,6 +45,11 @@ def route_registrar_cliente():
     return resposta
 
 
+# curl -H "Content-Type: application/json" -d "{\"email\": \"email123@hotmail.com\", \"senha\": \"teste\"}" 127.0.0.1:5000/api/cliente/login
+# usar -v para ver os headers
+# jwt no header 'Set-Cookie'
+# Set-Cookie: access_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0; HttpOnly; Path=/
+# jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0
 @bp.post('/login')
 def rota_logar_cliente():
     email, senha = get_json_fields(str, 'email', 'senha')
@@ -59,17 +65,20 @@ def rota_logar_cliente():
     return resposta
 
 
+# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/cliente/
 @bp.get('/')
 @jwt_required()
 def rota_retornar_cliente():
     return jsonify(Cliente.atual().dados())
 
 
+# curl 127.0.0.1:5000/api/cliente/1
 @bp.get('/<int:id>')
 def rota_dados_cliente(id:int):
     return jsonify(Cliente.query.get_or_404(id).dados())
 
 
+# nem funciona pelo curl, apenas serve para uso em browsers
 @bp.post('/logout')
 @jwt_required()
 def rota_deslogar_cliente():
@@ -78,7 +87,7 @@ def rota_deslogar_cliente():
     return response
 
 
-# apenas para testes!!
+# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/cliente/toggle-admin -X POST
 @bp.post('/toggle-admin')
 @jwt_required()
 def rota_toggle_admin():
