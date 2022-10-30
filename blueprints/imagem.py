@@ -1,11 +1,9 @@
-import os
 from http.client import BAD_REQUEST, NOT_FOUND
 from flask import abort, Blueprint, request, send_file, jsonify
-from flask_jwt_extended import jwt_required
 from werkzeug.utils import secure_filename
 
 import imagedb
-from modelo import Imagem, Imovel, db
+from modelo import Imovel
 
 bp = Blueprint('img', __name__, url_prefix='/img')
 

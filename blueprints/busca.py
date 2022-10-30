@@ -1,10 +1,10 @@
 from flask import Blueprint, jsonify
-from modelo import Imovel, Venda
 
+from modelo import Imovel, Venda
 from utils import get_json_fields
 
 
-bp = Blueprint('busca', url_prefix='/api/busca')
+bp = Blueprint('busca', __name__, url_prefix='/api/busca')
 
 
 @bp.get('/')
@@ -37,5 +37,5 @@ def rota_busca():
     query = query.filter(Imovel.quartos >= quartos_min)
 
     vendas = query.all()
-
+    
     return jsonify(vendas)

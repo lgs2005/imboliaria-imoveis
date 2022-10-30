@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Callable
 
 from flask_sqlalchemy import SQLAlchemy
@@ -6,28 +6,19 @@ from flask_jwt_extended import get_current_user
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped
 
-if TYPE_CHECKING:
-    import flask_sqlalchemy
-    import flask_sqlalchemy.query
-    import sqlalchemy
-    import sqlalchemy.orm
-    from typing_extensions import Self
-
-    class Model(flask_sqlalchemy.Model):
-        query: 'flask_sqlalchemy.query.Query[Self]'
-
-    class Database(flask_sqlalchemy.SQLAlchemy):
-        Model = Model
-        relationship: 'type[sqlalchemy.orm.relationship]'
-        session: 'sqlalchemy.orm.scoped_session'
-
-    db: Database
 
 db = SQLAlchemy()
 
 
-def extrair_dados(*campos: str):
-    return lambda self: { c: self.__getattribute__(c) for c in campos }
+def extrair_dados(*campos: str) -> 'Callable[[object], dict]':
+    '''Gera uma função que retorna os campos especificados em um formato pronto para json'''
+    def get_dado(o: object, c: str):
+        v = o.__getattribute__(c)
+        if isinstance(v, datetime):
+            v = v.isoformat()
+        return v
+        
+    return lambda self: { c: get_dado(self, c) for c in campos }
 
 
 class Cliente(db.Model):
@@ -110,6 +101,14 @@ class VendaAlugel(Venda):
 
     dados = extrair_dados('id', 'preco', 'tipo', 'alugado')
 
+    def alugel_atual(self):
+        agora = datetime.now(timezone.utc)
+
+        for alugel in self.alugeis:
+            if alugel.data_fim >= agora:
+                return alugel
+        
+        return None
 
 
 class Alugel(db.Model):
@@ -126,41 +125,12 @@ class Alugel(db.Model):
     data:           Mapped[datetime]        = Column(DateTime, nullable=False)
     data_fim:       Mapped[datetime]        = Column(DateTime, nullable=False)
 
-
-class VendaLeilao(Venda):
-    '''Venda através de leilao'''
-
-    __mapper_args__ = {
-        'polymorphic_identity': 'leilao'
-    }
-
-    data_fim:       Mapped[datetime]        = Column(DateTime)
-    apostas:        'Mapped[list[Aposta]]'  = db.relationship('Aposta', back_populates='leilao', foreign_keys='Aposta.leilao_id')
-
-    vencedor_id:    Mapped[int]             = Column(ForeignKey('aposta.id'), nullable=True)
-    vencedor:       Mapped['Aposta']        = db.relationship('Aposta', foreign_keys=vencedor_id)
-    
-    dados = extrair_dados('id', 'preco', 'tipo', 'data_fim', 'vencedor_id')
-
-
-class Aposta(db.Model):
-    '''Aposta feita em um leilao'''
-
-    id:             Mapped[int]             = Column(Integer, primary_key=True)
-
-    cliente_id:     Mapped[int]             = Column(ForeignKey(Cliente.id))
-    cliente:        Mapped[Cliente]         = db.relationship(Cliente)
-
-    leilao_id:      Mapped[int]             = Column(ForeignKey(VendaLeilao.id))
-    leilao:         Mapped[VendaLeilao]     = db.relationship(VendaLeilao, back_populates='apostas', foreign_keys=leilao_id)
-
-    valor:          Mapped[int]             = Column(Integer, nullable=False)
-    data:           Mapped[datetime]        = Column(DateTime, nullable=False)
+    dados = extrair_dados('id', 'venda_id', 'cliente_id', 'data', 'data_fim')
 
 
 class Imagem(db.Model):
-    id: Mapped[int] = Column(Integer, primary_key=True)
-    arquivo: Mapped[str] = Column(String(32), nullable=False, unique=True)
+    id:             Mapped[int]             = Column(Integer, primary_key=True)
+    arquivo:        Mapped[str]             = Column(String(32), nullable=False, unique=True)
 
-    imovel_id: Mapped[int] = Column(ForeignKey(Imovel.id))
-    imovel = db.relationship(Imovel, back_populates='imagens')
+    imovel_id:      Mapped[int]             = Column(ForeignKey(Imovel.id))
+    imovel:         Mapped[Imovel]          = db.relationship(Imovel, back_populates='imagens')

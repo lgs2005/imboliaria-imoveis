@@ -65,11 +65,29 @@ def rota_retornar_cliente():
     return jsonify(Cliente.atual().dados())
 
 
+@bp.get('/<int:id>')
+def rota_dados_cliente(id:int):
+    return jsonify(Cliente.query.get_or_404(id).dados())
+
+
 @bp.post('/logout')
+@jwt_required()
 def rota_deslogar_cliente():
     response = make_response(None, 200)
     unset_jwt_cookies(response)
     return response
+
+
+# apenas para testes!!
+@bp.post('/toggle-admin')
+@jwt_required()
+def rota_toggle_admin():
+    cliente = Cliente.atual()
+    cliente.admin = not cliente.admin
+    db.session.commit()
+    return f'admin: {cliente.admin}', 200
+
+
 
 jwt = JWTManager()
 

@@ -6,6 +6,10 @@ from modelo import db
 import blueprints.cliente
 import blueprints.pages
 import blueprints.imagem
+import blueprints.venda
+import blueprints.imovel
+import blueprints.alugel
+import blueprints.busca
 
 
 def create_app():
@@ -30,6 +34,11 @@ def create_app():
     app.register_blueprint(blueprints.cliente.bp)
     app.register_blueprint(blueprints.pages.bp)
     app.register_blueprint(blueprints.imagem.bp)
+
+    app.register_blueprint(blueprints.venda.bp)
+    app.register_blueprint(blueprints.imovel.bp)
+    app.register_blueprint(blueprints.alugel.bp)
+    app.register_blueprint(blueprints.busca.bp)
 
     return app
 
