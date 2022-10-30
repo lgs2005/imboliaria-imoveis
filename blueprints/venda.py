@@ -8,22 +8,23 @@ from utils import get_json_fields, admin_required
 
 bp = Blueprint('venda', __name__, url_prefix='/api/venda')
 
-
+# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/venda/1 -H "Content-Type: application/json" -d "{\"tipo\": \"venda\", \"preco\": 200}"
+# venda alugel:
+# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/venda/3 -H "Content-Type: application/json" -d "{\"tipo\": \"alugel\", \"preco\": 200}"
 @bp.post('/<int:id>')
 @admin_required
 def cadastro_venda(id:int):
-    tipo = get_json_fields(str, 'tipo')[0]
-    preco = get_json_fields(int, 'preco')[0]
+    tipo = get_json_fields(str, 'tipo')
+    preco = get_json_fields(int, 'preco')
 
     imovel = Imovel.query.get_or_404(id)
     venda = Venda.query.get(id)
 
     if venda != None:
-        abort(UNAUTHORIZED)
+        abort(CONFLICT)
 
     if tipo == 'venda':
         venda = Venda(
-            tipo=tipo,
             preco=preco,
             imovel=imovel,
         )
@@ -33,7 +34,6 @@ def cadastro_venda(id:int):
         cliente = Cliente.query.get_or_404(cliente_id)
 
         venda = VendaRealizada(
-            tipo=tipo,
             preco=preco,
             imovel=imovel,
             cliente=cliente,
@@ -42,7 +42,6 @@ def cadastro_venda(id:int):
 
     elif tipo == 'alugel':
         venda = VendaAlugel(
-            tipo=tipo,
             preco=preco,
             imovel=imovel,
             alugado=False,
@@ -57,11 +56,13 @@ def cadastro_venda(id:int):
     return jsonify(venda.dados())
 
 
+# curl 127.0.0.1:5000/api/venda/1
 @bp.get('/<int:id>')
 def dados_venda(id:int):
     return jsonify(Venda.query.get_or_404(id).dados())
 
 
+# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/venda/1 -X DELETE
 @bp.delete('/<int:id>')
 @admin_required
 def delete_venda(id:int):
@@ -73,6 +74,7 @@ def delete_venda(id:int):
     return 'ok', 200
 
 
+# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/venda/1/comprar -X POST
 @bp.post('/<int:id>/comprar')
 @jwt_required()
 def comprar_venda(id:int):
@@ -82,13 +84,13 @@ def comprar_venda(id:int):
         abort(CONFLICT)
     
     venda_realizada = VendaRealizada(
-        tipo=venda.tipo,
         preco=venda.preco,
         imovel=venda.imovel,
         cliente=Cliente.atual(),
+        data=datetime.now(timezone.utc),
     )
 
-    db.session.remove(venda)
+    db.session.delete(venda)
     db.session.add(venda_realizada)
     db.session.commit()
 
