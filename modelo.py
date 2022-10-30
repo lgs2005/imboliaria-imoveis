@@ -102,7 +102,7 @@ class VendaAlugel(Venda):
     dados = extrair_dados('id', 'preco', 'tipo', 'alugado')
 
     def alugel_atual(self):
-        agora = datetime.now(timezone.utc)
+        agora = datetime.utcnow()
 
         for alugel in self.alugeis:
             if alugel.data_fim >= agora:

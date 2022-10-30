@@ -9,6 +9,7 @@ from utils import admin_required, get_json_fields
 bp = Blueprint('alugel', __name__, url_prefix='/api/alugel')
 
 
+# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/alugel/3/alugar -H "Content-Type: application/json" -d "{\"data_fim\": \"2078-08-01T03:00:00.000Z\"}
 @bp.post('/<int:id>/alugar')
 @jwt_required()
 def adicionar_alugel(id:int):
@@ -17,8 +18,13 @@ def adicionar_alugel(id:int):
     if venda.alugado:
         abort(CONFLICT)
 
-    iso_data_fim = get_json_fields(str, 'data_fim')[0]
-    data_fim = datetime.fromisoformat(iso_data_fim)
+    iso_data_fim = get_json_fields(str, 'data_fim')
+
+    try:
+        data_fim = datetime.fromisoformat(iso_data_fim)
+    except ValueError:
+        abort(BAD_REQUEST)
+    
     data_now = datetime.now(timezone.utc)
 
     if data_fim <= data_now:
@@ -38,21 +44,24 @@ def adicionar_alugel(id:int):
     return jsonify(alugel.dados())
 
 
+# curl 127.0.0.1:5000/api/alugel/3/todos
 @bp.get('/<int:id>/todos')
 def listar_alugel(id:int):
     return jsonify([a.dados() for a in VendaAlugel.query.get_or_404(id).alugeis])
 
-
+# curl 127.0.0.1:5000/api/alugel/3/atual
 @bp.get('/<int:id>/atual')
 def alugel_atual(id:int):
-    atual = VendaAlugel.get_or_404(id).alugel_atual()
+    atual = VendaAlugel.query.get_or_404(id).alugel_atual()
 
     if atual == None:
         abort(NOT_FOUND)
 
     return jsonify(atual.dados())
 
-
+# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/alugel/3/devolver -X POST
+# este comando ira funcionar após 3 da manha de 1 de agosto de 2078 no horario de brasilia
+# (altere as datas para testar)
 @bp.post('/<int:id>/devolver')
 @admin_required
 def devolver_alugel(id:int):
