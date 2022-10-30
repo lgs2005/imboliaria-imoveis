@@ -3,18 +3,19 @@ from flask import abort, Blueprint, request, send_file, jsonify
 from werkzeug.utils import secure_filename
 
 import imagedb
-from modelo import Imovel
+from modelo import Imagem, Imovel, db
+from utils import admin_required
 
 bp = Blueprint('img', __name__, url_prefix='/img')
 
 
-@bp.post('/add')
-#@jwt_required()
-def rota_adicionar_imagem():
+@bp.post('/<int:id>/add')
+@admin_required
+def rota_adicionar_imagem(id:int):
     if 'file' not in request.files:
         abort(BAD_REQUEST)
 
-    #imovel: Imovel = Imovel.query.get_or_404(id)
+    imovel: Imovel = Imovel.query.get_or_404(id)
     img = request.files['file']
     
     if '.' not in img.filename:
@@ -25,21 +26,18 @@ def rota_adicionar_imagem():
     if ext not in ['png', 'jpg', 'jpeg']:
         abort(BAD_REQUEST)
 
-
-
-
     img_name = imagedb.new_entry()
     filename = secure_filename(f'{img_name}.{ext}')
 
     img.save(imagedb.img_path(filename))
 
-    # cadastro = Imagem(
-    #     imovel=imovel,
-    #     arquivo=img_name,
-    # )
+    cadastro = Imagem(
+        imovel=imovel,
+        arquivo=img_name,
+    )
 
-    # db.session.add(cadastro)
-    # db.session.commit()
+    db.session.add(cadastro)
+    db.session.commit()
 
     return img_name
 
