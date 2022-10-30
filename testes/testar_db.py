@@ -1,8 +1,7 @@
 import os
 from datetime import datetime
 
-from modelo import (Alugel, Aposta, Cliente, Imovel, Venda, VendaAlugel,
-                      VendaLeilao, VendaRealizada, db)
+from modelo import Alugel, Cliente, Imovel, Venda, VendaAlugel,VendaRealizada, db
 from flask import Flask
 
 from testes.tester import Tester
@@ -10,7 +9,7 @@ from testes.tester import Tester
 tester = Tester()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dbtestes.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///testes.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Testes importantes para verificar o
@@ -22,8 +21,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 def criar_db():
     app.app_context().push()
 
-    if os.path.exists('./testes/dbtestes.db'):
-        os.remove('./testes/dbtestes.db')
+    if os.path.exists(app.instance_path + '/testes.db'):
+        os.remove(app.instance_path + '/testes.db')
 
     db.init_app(app)
     db.session.execute('PRAGMA FOREIGN_KEYS=ON')
@@ -44,29 +43,34 @@ def inserir_objetos():
     imovel1 = Imovel(
         nome='imovel1',
         descricao='[]',
-        local='?',
+        cidade='sao jose dos pinhais',
+        bairro='aquarinha',
         area=200,
+        quartos=2,
+        apartamento=False,
+        quintal=True,
     )
 
     imovel2 = Imovel(
         nome='imovel2',
         descricao='[]',
-        local='?',
+        cidade='sao jose dos pinhais',
+        bairro='aquarinha',
         area=200,
+        quartos=2,
+        apartamento=False,
+        quintal=True,
     )
 
     imovel3 = Imovel(
         nome='imovel3',
         descricao='[]',
-        local='?',
+        cidade='sao jose dos pinhais',
+        bairro='aquarinha',
         area=200,
-    )
-
-    imovel4 = Imovel(
-        nome='imovel4',
-        descricao='[]',
-        local='?',
-        area=200,
+        quartos=2,
+        apartamento=False,
+        quintal=True,
     )
 
     venda_normal = Venda(
@@ -101,29 +105,9 @@ def inserir_objetos():
         data_fim=datetime.utcnow()
     )
 
-    venda_leilao = VendaLeilao(
-        imovel=imovel4,
-        preco=800,  # preco inicial
-        data_fim=datetime.utcnow(),
-    )
 
-    aposta1 = Aposta(
-        cliente=cliente,
-        leilao=venda_leilao,
-        valor=900,
-        data=datetime.utcnow(),
-    )
-
-    aposta2 = Aposta(
-        cliente=cliente,
-        leilao=venda_leilao,
-        valor=900,
-        data=datetime.utcnow(),
-    )
-
-    db.session.add_all([cliente, imovel1, imovel2, imovel3, imovel4, venda_normal,
-                       venda_realizada, venda_alugel, alugel1, alugel2, venda_leilao, aposta1, aposta2])
-
+    db.session.add_all([cliente, imovel1, imovel2, imovel3, venda_normal,
+                       venda_realizada, venda_alugel, alugel1, alugel2])
     db.session.commit()
 
     imovel2_busca = Imovel.query.filter_by(nome='imovel2').first()
@@ -137,23 +121,22 @@ def inserir_objetos():
     assert imovel3_busca.venda.tipo == 'alugel', 'nao salvou venda correta'
     assert len(imovel3_busca.venda.alugeis) == 2, 'alugeis nao listados'
 
-    leilao_busca = VendaLeilao.query.get(venda_leilao.id)
-
-    assert leilao_busca.imovel != None, 'nao carregou imovel'
-    assert len(leilao_busca.apostas) == 2, 'apostas nao listadas'
-
     vendas = Venda.query.all()
 
-    assert len(vendas) == 4, 'nao carregou todas as vendas'
+    assert len(vendas) == 3, 'nao carregou todas as vendas'
 
 
 @tester.test('apenas uma venda por imovel', erro=True)
 def uma_venda_por_imovel():
     imovel = Imovel(
         nome='imovel_teste',
-        descricao='teste',
-        local='aqui',
-        area=0,
+        descricao='[]',
+        cidade='sao jose dos pinhais',
+        bairro='aquarinha',
+        area=200,
+        quartos=2,
+        apartamento=False,
+        quintal=True,
     )
 
     venda1 = Venda(
@@ -182,9 +165,13 @@ def alugel_venda_alugel():
 
     imovel = Imovel(
         nome='imovel_teste',
-        descricao='teste',
-        local='aqui',
-        area=0,
+        descricao='[]',
+        cidade='sao jose dos pinhais',
+        bairro='aquarinha',
+        area=200,
+        quartos=2,
+        apartamento=False,
+        quintal=True,
     )
 
     venda = Venda(
@@ -200,37 +187,4 @@ def alugel_venda_alugel():
     )
 
     db.session.add_all([cliente, imovel, venda, alugel])
-    db.session.commit()
-
-
-@tester.test('aposta apenas em VendaLeilao', erro=True)
-def aposta_venda_leilao():
-    cliente = Cliente(
-        nome='Teste',
-        email='teste@teste.com',
-        cpf='00011122233',
-        telefone='047912345678',
-        senha='$$$hash$$$$456$$???$?$?$??$',
-    )
-
-    imovel = Imovel(
-        nome='imovel_teste',
-        descricao='teste',
-        local='aqui',
-        area=0,
-    )
-
-    venda = Venda(
-        imovel=imovel,
-        preco=200,
-    )
-
-    aposta = Aposta( # ! ERRO: aposta apenas em VendaLeilao
-        leilao=venda,
-        cliente=cliente,
-        data=datetime.utcnow(),
-        valor=4_000_000_000_000,
-    )
-
-    db.session.add_all([cliente, imovel, venda, aposta])
     db.session.commit()

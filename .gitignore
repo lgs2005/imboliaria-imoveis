@@ -1,6 +1,5 @@
 __pycache__
 instance
-*.db
 
 imagedb/*
 !imagedb/__init__.py
