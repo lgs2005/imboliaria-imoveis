@@ -7,6 +7,7 @@ from utils import get_json_fields
 bp = Blueprint('busca', __name__, url_prefix='/api/busca')
 
 
+# curl 127.0.0.1:5000/api/busca/ -X GET -H "Content-Type: application/json" -d "{\"apt\": 0, \"quintal\": 0, \"preco_max\": 500, \"cidade\": \"canada\", \"bairro\": \"any\", \"tamanho_min\": 0, \"tamanho_max\": 5000, \"quartos_min\": 0}"
 @bp.get('/')
 def rota_busca():    
     apt, quintal = get_json_fields(int, 'apt', 'quintal')
@@ -38,4 +39,4 @@ def rota_busca():
 
     vendas = query.all()
     
-    return jsonify(vendas)
+    return jsonify([v.dados() for v in vendas])
