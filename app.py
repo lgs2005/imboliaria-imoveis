@@ -11,13 +11,15 @@ import blueprints.imovel
 import blueprints.alugel
 import blueprints.busca
 
+DATABASE_FILE = 'database.db'
+
 
 def create_app():
     app = Flask(__name__)
 
     app.config['MAX_CONTENT_LENGHT'] = 2 * 1024 * 1024
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///database.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DATABASE_FILE}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     app.config['JWT_SECRET_KEY'] = 'b25aeed15e1a4f3e9837125d8a815b86-casanapraia-2c040adb0beb40cebf4af3276028acee'
