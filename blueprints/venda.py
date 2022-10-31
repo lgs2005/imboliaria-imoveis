@@ -14,6 +14,18 @@ bp = Blueprint('venda', __name__, url_prefix='/api/venda')
 @bp.post('/<int:id>')
 @admin_required
 def cadastro_venda(id:int):
+    '''Cadastra uma venda para um ímovel
+    O ID no URL é o id do imóvel, apenas uma venda por imóvel
+    Parâmetros:
+        tipo: 'venda' ou 'alugel'
+        preco: int
+    
+        ou
+
+        tipo: 'realizada'
+        preco: int
+        cliente_id: int
+    '''
     tipo = get_json_fields(str, 'tipo')
     preco = get_json_fields(int, 'preco')
 
@@ -59,6 +71,7 @@ def cadastro_venda(id:int):
 # curl 127.0.0.1:5000/api/venda/1
 @bp.get('/<int:id>')
 def dados_venda(id:int):
+    '''Retorna os dados de uma venda'''
     return jsonify(Venda.query.get_or_404(id).dados())
 
 
@@ -66,6 +79,7 @@ def dados_venda(id:int):
 @bp.delete('/<int:id>')
 @admin_required
 def delete_venda(id:int):
+    '''Remove uma venda do banco de dados'''
     venda = Venda.query.get_or_404(id)
 
     db.session.delete(venda)
@@ -78,6 +92,9 @@ def delete_venda(id:int):
 @bp.post('/<int:id>/comprar')
 @jwt_required()
 def comprar_venda(id:int):
+    '''Permite aos usuários fazer uma compra fornecendo o id de uma venda
+    Apenas para vendas do tipo 'venda'
+    '''
     venda: Venda = Venda.query.get_or_404(id)
 
     if venda.tipo != 'venda':

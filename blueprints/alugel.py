@@ -13,6 +13,11 @@ bp = Blueprint('alugel', __name__, url_prefix='/api/alugel')
 @bp.post('/<int:id>/alugar')
 @jwt_required()
 def adicionar_alugel(id:int):
+    '''Faz o alugel de um imóvel que está sendo vendido em uma venda do tipo 'alugel'
+    ID no URL = ID da venda
+    Parâmetros:
+        data_fim: str - uma data no formato ISO
+    '''
     venda: VendaAlugel = VendaAlugel.query.get_or_404(id)
 
     if venda.alugado:
@@ -47,11 +52,13 @@ def adicionar_alugel(id:int):
 # curl 127.0.0.1:5000/api/alugel/3/todos
 @bp.get('/<int:id>/todos')
 def listar_alugel(id:int):
+    '''Lista todos os alugeis de uma venda tipo 'alugel' '''
     return jsonify([a.dados() for a in VendaAlugel.query.get_or_404(id).alugeis])
 
 # curl 127.0.0.1:5000/api/alugel/3/atual
 @bp.get('/<int:id>/atual')
 def alugel_atual(id:int):
+    '''Retorna o alugel atual de uma venda tipo 'alugel' '''
     atual = VendaAlugel.query.get_or_404(id).alugel_atual()
 
     if atual == None:
@@ -65,6 +72,7 @@ def alugel_atual(id:int):
 @bp.post('/<int:id>/devolver')
 @admin_required
 def devolver_alugel(id:int):
+    '''Marca uma venda tipo 'alugel' como não alugada se o tempo do último alugel já passou'''
     venda: VendaAlugel = VendaAlugel.query.get_or_404(id)
     
     if venda.alugel_atual() != None:

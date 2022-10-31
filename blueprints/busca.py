@@ -10,6 +10,17 @@ bp = Blueprint('busca', __name__, url_prefix='/api/busca')
 # curl 127.0.0.1:5000/api/busca/ -X GET -H "Content-Type: application/json" -d "{\"apt\": 0, \"quintal\": 0, \"preco_max\": 500, \"cidade\": \"canada\", \"bairro\": \"any\", \"tamanho_min\": 0, \"tamanho_max\": 5000, \"quartos_min\": 0}"
 @bp.get('/')
 def rota_busca():    
+    '''Busca por vendas utilizando filtros
+    Parâmetros:
+        apt: int - 0 para false, qualquer outro para true
+        quintal: int - 0 para false, qualquer outro para true
+        preco_max: int
+        cidade: str - 'any' para qualquer cidade
+        bairro: str - 'any' para qualquer bairro
+        tamanho_min: int
+        tamanho_max: int
+        quartos_min: int
+    '''
     apt, quintal = get_json_fields(int, 'apt', 'quintal')
     preco_max = get_json_fields(int, 'preco_max')
     cidade, bairro = get_json_fields(str, 'cidade', 'bairro')

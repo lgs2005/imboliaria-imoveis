@@ -15,6 +15,14 @@ bp = Blueprint('cliente', __name__, url_prefix='/api/cliente')
 # curl -H "Content-Type: application/json" -d "{\"nome\": \"teste\", \"email\": \"email123@hotmail.com\", \"cpf\": \"12345678913\", \"telefone\": \"047158963289\", \"senha\": \"teste\"}" 127.0.0.1:5000/api/cliente/registrar
 @bp.post('/registrar')
 def route_registrar_cliente():
+    '''Registra um novo cliente.
+    Parâmetros:
+        nome: str
+        email: str
+        cpf: str
+        telefone: str
+        senha: str
+    '''
     nome, email, cpf, telefone, senha = get_json_fields(
         str, 'nome', 'email', 'cpf', 'telefone', 'senha')
     
@@ -52,6 +60,11 @@ def route_registrar_cliente():
 # jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0
 @bp.post('/login')
 def rota_logar_cliente():
+    '''Faz login de um criente já registrado
+    Parâmetos:
+        email: str
+        senha: str
+    '''
     email, senha = get_json_fields(str, 'email', 'senha')
     cliente: Cliente = Cliente.query.filter_by(email=email).first_or_404()
 
@@ -69,12 +82,14 @@ def rota_logar_cliente():
 @bp.get('/')
 @jwt_required()
 def rota_retornar_cliente():
+    '''Retorna os dados do cliente atual'''
     return jsonify(Cliente.atual().dados())
 
 
 # curl 127.0.0.1:5000/api/cliente/1
 @bp.get('/<int:id>')
 def rota_dados_cliente(id:int):
+    '''Retorna os dados de um cliente qualquer'''
     return jsonify(Cliente.query.get_or_404(id).dados())
 
 
@@ -82,6 +97,7 @@ def rota_dados_cliente(id:int):
 @bp.post('/logout')
 @jwt_required()
 def rota_deslogar_cliente():
+    '''Remove os cookies de login em browsers'''
     response = make_response(None, 200)
     unset_jwt_cookies(response)
     return response
@@ -91,6 +107,9 @@ def rota_deslogar_cliente():
 @bp.post('/toggle-admin')
 @jwt_required()
 def rota_toggle_admin():
+    '''Torna o cliente admin ou não
+    APENAS PARA TESTES!
+    '''
     cliente = Cliente.atual()
     cliente.admin = not cliente.admin
     db.session.commit()

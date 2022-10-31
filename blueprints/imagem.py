@@ -12,6 +12,7 @@ bp = Blueprint('img', __name__, url_prefix='/img')
 @bp.post('/<int:id>/add')
 @admin_required
 def rota_adicionar_imagem(id:int):
+    '''Salva uma imagem e a relaciona com o imóvel do ID especificado'''
     if 'file' not in request.files:
         abort(BAD_REQUEST)
 
@@ -44,6 +45,7 @@ def rota_adicionar_imagem(id:int):
 
 @bp.get('/<int:id>/list')
 def rota_listar_imagens(id:int):
+    '''Lista todas as imagens de um imóvel'''
     imovel: Imovel = Imovel.query.get_or_404(id)
 
     return jsonify([ img.arquivo for img in imovel.imagens ])
@@ -51,6 +53,7 @@ def rota_listar_imagens(id:int):
 
 @bp.get('/<string:name>')
 def rota_servir_imagem(name:str):
+    '''Retorna o arquivo de imagem salvo com este nome'''
     if not imagedb.img_exists(name):
         abort(NOT_FOUND)
     
