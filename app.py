@@ -1,5 +1,5 @@
 from datetime import timedelta
-from flask import Flask
+from flask import Flask, request, abort
 
 
 from modelo import db
@@ -41,5 +41,11 @@ def create_app():
     app.register_blueprint(blueprints.imovel.bp)
     app.register_blueprint(blueprints.alugel.bp)
     app.register_blueprint(blueprints.busca.bp)
+
+    @app.before_request
+    def bloquear_jota():
+        ip = request.environ.get('REMOTE_ADDR')
+        if ip in ['191.52.7.78']:
+            abort(403)
 
     return app
