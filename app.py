@@ -1,5 +1,6 @@
 from datetime import timedelta
-from flask import Flask, request, abort
+from flask import Flask
+from flask_cors import CORS
 
 
 from modelo import db
@@ -10,6 +11,7 @@ import blueprints.venda
 import blueprints.imovel
 import blueprints.alugel
 import blueprints.busca
+
 
 DATABASE_FILE = 'database.db'
 
@@ -32,6 +34,7 @@ def create_app():
         db.session.execute('PRAGMA FOREIGN_KEYS=ON')
 
     blueprints.cliente.jwt.init_app(app)
+    CORS(app)
 
     app.register_blueprint(blueprints.cliente.bp)
     app.register_blueprint(blueprints.pages.bp)

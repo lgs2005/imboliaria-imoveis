@@ -78,7 +78,7 @@ def rota_logar_cliente():
     return resposta
 
 
-# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/cliente/
+# curl -H "Authorization: Bearer (JWT)" 127.0.0.1:5000/api/cliente/
 @bp.get('/')
 @jwt_required()
 def rota_retornar_cliente():
@@ -103,7 +103,7 @@ def rota_deslogar_cliente():
     return response
 
 
-# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/cliente/toggle-admin -X POST
+# curl -H "Authorization: Bearer (jwt)" 127.0.0.1:5000/api/cliente/toggle-admin -X POST
 @bp.post('/toggle-admin')
 @jwt_required()
 def rota_toggle_admin():

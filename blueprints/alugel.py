@@ -9,7 +9,7 @@ from utils import admin_required, get_json_fields
 bp = Blueprint('alugel', __name__, url_prefix='/api/alugel')
 
 
-# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/alugel/3/alugar -H "Content-Type: application/json" -d "{\"data_fim\": \"2078-08-01T03:00:00.000Z\"}
+# curl -H "Authorization: Bearer (jwt)" 127.0.0.1:5000/api/alugel/3/alugar -H "Content-Type: application/json" -d "{\"data_fim\": \"2078-08-01T03:00:00.000Z\"}
 @bp.post('/<int:id>/alugar')
 @jwt_required()
 def adicionar_alugel(id:int):
@@ -66,7 +66,7 @@ def alugel_atual(id:int):
 
     return jsonify(atual.dados())
 
-# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/alugel/3/devolver -X POST
+# curl -H "Authorization: Bearer (jwt)" 127.0.0.1:5000/api/alugel/3/devolver -X POST
 # este comando ira funcionar após 3 da manha de 1 de agosto de 2078 no horario de brasilia
 # (altere as datas para testar)
 @bp.post('/<int:id>/devolver')

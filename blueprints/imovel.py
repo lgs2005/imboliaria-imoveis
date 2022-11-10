@@ -7,7 +7,7 @@ from utils import admin_required, get_json_fields
 
 bp = Blueprint('imovel', __name__, url_prefix='/api/imovel')
 
-# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/imovel/ -H "Content-Type: application/json" -d "{\"nome\": \"teste\", \"descricao\": \"teste\", \"cidade\": \"canada\", \"bairro\": \"warnow\", \"area\": 5, \"quartos\": 20, \"apartamento\": false, \"quintal\": true}"
+# curl -H "Authorization: Bearer (jwt)" 127.0.0.1:5000/api/imovel/ -H "Content-Type: application/json" -d "{\"nome\": \"teste\", \"descricao\": \"teste\", \"cidade\": \"canada\", \"bairro\": \"warnow\", \"area\": 5, \"quartos\": 20, \"apartamento\": false, \"quintal\": true}"
 @bp.post('/')
 @admin_required
 def cadastro_imovel():
@@ -34,7 +34,7 @@ def cadastro_imovel():
 
     return jsonify(imovel.dados())
 
-# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/imovel/1 -H "Content-Type: application/json" -d "{\"apartamento\": true}" -X PATCH
+# curl -H "Authorization: Bearer (jwt)" 127.0.0.1:5000/api/imovel/1 -H "Content-Type: application/json" -d "{\"apartamento\": true}" -X PATCH
 @bp.patch('/<int:id>')
 @admin_required
 def alterar_imovel(id:int):
@@ -76,7 +76,7 @@ def get_imovel(id:int):
     return jsonify(Imovel.query.get_or_404(id).dados())
 
 
-# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/imovel/2 -X DELETE
+# curl -H "Authorization: Bearer (jwt)" 127.0.0.1:5000/api/imovel/2 -X DELETE
 @bp.delete('/<int:id>')
 @admin_required
 def delete_imovel(id:int):

@@ -8,9 +8,9 @@ from utils import get_json_fields, admin_required
 
 bp = Blueprint('venda', __name__, url_prefix='/api/venda')
 
-# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/venda/1 -H "Content-Type: application/json" -d "{\"tipo\": \"venda\", \"preco\": 200}"
+# curl -H "Authorization: Bearer (jwt)" 127.0.0.1:5000/api/venda/1 -H "Content-Type: application/json" -d "{\"tipo\": \"venda\", \"preco\": 200}"
 # venda alugel:
-# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/venda/3 -H "Content-Type: application/json" -d "{\"tipo\": \"alugel\", \"preco\": 200}"
+# curl -H "Authorization: Bearer (jwt)" 127.0.0.1:5000/api/venda/3 -H "Content-Type: application/json" -d "{\"tipo\": \"alugel\", \"preco\": 200}"
 @bp.post('/<int:id>')
 @admin_required
 def cadastro_venda(id:int):
@@ -75,7 +75,7 @@ def dados_venda(id:int):
     return jsonify(Venda.query.get_or_404(id).dados())
 
 
-# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/venda/1 -X DELETE
+# curl -H "Authorization: Bearer (jwt)" 127.0.0.1:5000/api/venda/1 -X DELETE
 @bp.delete('/<int:id>')
 @admin_required
 def delete_venda(id:int):
@@ -88,7 +88,7 @@ def delete_venda(id:int):
     return 'ok', 200
 
 
-# curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NzE0ODUzNiwianRpIjoiNzA0OTcxZmItNDRjMS00MTE1LTlmYjItYjdjYTliNzI2MmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY3MTQ4NTM2LCJjc3JmIjoiMWY0ODVhNGQtOTlmYy00ZWEzLTg4YWYtMzAzOWUyNmNlNDc0IiwiZXhwIjoxNjY3MTUyMTM2fQ.IAazJ_7F2qLK9MhC13y2hRssdGgd2urxOsEBa62Ukn0" 127.0.0.1:5000/api/venda/1/comprar -X POST
+# curl -H "Authorization: Bearer (jwt)" 127.0.0.1:5000/api/venda/1/comprar -X POST
 @bp.post('/<int:id>/comprar')
 @jwt_required()
 def comprar_venda(id:int):

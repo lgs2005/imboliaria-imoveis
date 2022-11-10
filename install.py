@@ -6,7 +6,8 @@ pacotes = [
     'flask-sqlalchemy',
     'sqlalchemy2-stubs',
     'flask-jwt-extended',
-    'flask-bcrypt'
+    'flask-bcrypt',
+    'flask-cors',
 ]
 
 
