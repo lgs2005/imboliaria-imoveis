@@ -3,3 +3,5 @@ instance
 
 imagedb/*
 !imagedb/__init__.py
+
+.vscode/settings.json
