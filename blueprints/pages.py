@@ -6,7 +6,7 @@ bp = Blueprint('paginas', __name__)
 
 @bp.get('/')
 def page_default():
-    return render_template('subtituto.html')
+    return render_template('index.html')
 
 
 @bp.get('/contato')
