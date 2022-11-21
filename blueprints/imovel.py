@@ -9,7 +9,7 @@ bp = Blueprint('imovel', __name__, url_prefix='/api/imovel')
 
 # curl -H "Authorization: Bearer (jwt)" 127.0.0.1:5000/api/imovel/ -H "Content-Type: application/json" -d "{\"nome\": \"teste\", \"descricao\": \"teste\", \"cidade\": \"canada\", \"bairro\": \"warnow\", \"area\": 5, \"quartos\": 20, \"apartamento\": false, \"quintal\": true}"
 @bp.post('/')
-@admin_required
+#@admin_required
 def cadastro_imovel():
     '''Cadastra um novo imóvel
     Parâmetros:

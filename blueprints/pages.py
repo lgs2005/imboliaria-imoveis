@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
+from modelo import Imovel
 
 
 bp = Blueprint('paginas', __name__)
@@ -6,6 +7,11 @@ bp = Blueprint('paginas', __name__)
 
 @bp.get('/')
 def page_default():
+    return f'<a href="http://{request.host}/index">imoveis</a> (Lucas e Amadeus)'
+
+
+@bp.get('/index')
+def page_index():
     return render_template('index.html')
 
 
@@ -22,3 +28,8 @@ def page_sobre():
 @bp.get('/teste')
 def page_teste():
     return render_template('testing.html')
+
+
+@bp.get('/imovel/<int:id>')
+def page_imovel(id:int):
+    return render_template('imovel.html', imovel=Imovel.query.get_or_404(id))
