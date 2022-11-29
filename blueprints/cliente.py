@@ -27,13 +27,13 @@ def route_registrar_cliente():
         str, 'nome', 'email', 'cpf', 'telefone', 'senha')
     
     if Cliente.query.filter_by(email=email).first() != None:
-        return res_erro('e-mail ja cadastrado')
+        return res_erro('Email já cadastrado.')
     
     if Cliente.query.filter_by(cpf=cpf).first() != None:
-        return res_erro('cpf ja cadastrado')
+        return res_erro('CPF já cadastrado.')
     
     if Cliente.query.filter_by(telefone=telefone).first() != None:
-        return res_erro('telefone ja cadastrado')
+        return res_erro('Telefone já cadastrado.')
     
     novo_cliente = Cliente(
         nome=nome,

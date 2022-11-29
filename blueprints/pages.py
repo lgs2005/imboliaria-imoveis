@@ -7,12 +7,12 @@ bp = Blueprint('paginas', __name__)
 
 @bp.get('/')
 def page_default():
-    return f'<a href="http://{request.host}/index">imoveis</a> (Lucas e Amadeus)'
+    return f'<a href="http://{request.host}/inicio">imoveis</a> (Lucas e Amadeus)'
 
 
-@bp.get('/index')
+@bp.get('/inicio')
 def page_index():
-    return render_template('index.html')
+    return render_template('inicio.html')
 
 
 @bp.get('/contato')

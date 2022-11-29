@@ -7,17 +7,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Imboliaria</title>
 
+    <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/backend_api.js"></script>
 
     {% block head %}
     {% endblock %}
+
+    <style>
+        nav {
+            background-color: red;
+            margin: 0;
+            padding: 15px 25px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        
+            flex-grow: 1;
+            text-align: center;
+            font-size: x-large;
+        }
+    </style>
+    <style>
+        #login_dialog {
+            margin: auto;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.3);
+            padding: 15px 15px;
+        }
+
+        #login_dialog form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #login_dialog form input {
+            margin-bottom: 10px;
+        }
+
+        #login_dialog form button {
+            margin: 10px 0px;
+        }
+
+        #login_error, #register_error {
+            color: red;
+        }
+
+        #login_nav {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        #login_nav a {
+            font-weight: bold;
+            font-size: small;
+        }
+    </style>
+
 </head>
 
 <body>
     <nav class="flex-row">
-        <a href="/">Início</a>
-        <a href="/contato">Contato</a>
-        <a href="/sobre">Sobre</a>
+        <a href="/inicio">Início</a>
+        <a href="/sobre">Sobre nós</a>
+        <a id="login_link">Login</a>
     </nav>
 
     {% block conteudo %}
@@ -25,6 +85,104 @@
 
     {% block script %}
     {% endblock %}
+
+    <dialog id="login_dialog">
+        <div id="login_nav">
+            <a id="login_nav_link" class="invisible"><< Login</a>
+            <a id="register_nav_link">Registrar >></a>
+        </div>
+
+        <form id="login_form">
+            <label for="login_email">Email</label>
+            <input id="login_email" type="email">
+            <label for="login_password">Senha</label>
+            <input id="login_password" type="password">
+            <button id="login_enviar">Login</button>
+            <div id="login_error"></div>
+        </form>
+
+        <form id="register_form" class="hidden">
+            <label for="register_name">Nome</label>
+            <input type="text" id="register_name">
+            <label for="register_cpf">CPF</label>
+            <input type="text" id="register_cpf">
+            <label for="register_phone">Telefone</label>
+            <input type="tel" id="register_phone">
+            <label for="register_email">Email</label>
+            <input type="email" id="register_email">
+            <label for="register_password">Senha</label>
+            <input type="password" id="register_password">
+            <button id="register_send">Registrar</button>
+            <div id="register_error"></div>
+        </form>
+    </dialog>
+
+    <script>
+        $('#login_link').on('click', function(ev) {
+            ev.preventDefault();
+            $('#login_dialog')[0].showModal();
+        })
+
+        $('#login_form').on('submit', function(ev) {
+            ev.preventDefault();
+
+            let email = $('#login_email').val();
+            let password = $('#login_password').val();
+
+            api_loginUser(email, password).then(
+                (result) => {
+                    if (result.ok) {
+                        window.location.reload();
+                    } else {
+                        if (result.err == 'not_found') {
+                            $('#login_error').text('Este usuário não existe')
+                        }
+                        else if (result.err == 'unauthorized') {
+                            $('#login_error').text('Senha incorreta')
+                        }
+                    }
+                },
+                (err) => alert(err)
+            );
+        })
+
+        $('#register_form').on('submit', function(ev) {
+            ev.preventDefault();
+
+            let name = $('#register_name').val();
+            let email = $('#register_email').val();
+            let cpf = $('#register_cpf').val();
+            let telefone = $('#register_phone').val();
+            let password = $('#register_password').val();
+
+            api_registerUser(name, email, cpf, telefone, password).then(
+                (result) => {
+                    if (result.ok) {
+                        window.location.reload()
+                    } else {
+                        $('#register_error').text(result.erro)
+                    }
+                },
+                (err) => alert(err)
+            )
+        })
+
+        $('#register_nav_link').on('click', function(ev) {
+            ev.preventDefault();
+            $('#register_nav_link').toggleClass('invisible', true);
+            $('#login_form').toggleClass('hidden', true);
+            $('#login_nav_link').toggleClass('invisible', false)
+            $('#register_form').toggleClass('hidden', false)
+        })
+
+        $('#login_nav_link').on('click', function(ev) {
+            ev.preventDefault();
+            $('#register_nav_link').toggleClass('invisible', false);
+            $('#login_form').toggleClass('hidden', false);
+            $('#login_nav_link').toggleClass('invisible', true)
+            $('#register_form').toggleClass('hidden', true)
+        })
+    </script>
 </body>
 
 </html>

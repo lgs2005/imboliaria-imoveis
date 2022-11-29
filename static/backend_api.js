@@ -4,6 +4,10 @@ function fetch3rd(path, method, data, handlers) {
         credentials: 'include',
     };
 
+    if (handlers == undefined) {
+        handlers = {}
+    }
+
     if (data !== undefined) {
         options.body = JSON.stringify(data)
         options.headers = {
@@ -33,13 +37,14 @@ function fetch3rd(path, method, data, handlers) {
 }
 
 function api_registerUser(nome, email, cpf, telefone, senha) {
-    return fetch3rd('/api/ciente/registrar', 'POST', { nome, email, cpf, telefone, senha });
+    return fetch3rd('/api/cliente/registrar', 'POST', { nome, email, cpf, telefone, senha });
 }
 
 function api_loginUser(email, senha) {
     return fetch3rd('/api/cliente/login', 'POST', { email, senha }, {
         ok: (user) => ({ ok: true, user }),
-        401: (res) => ({ ok: false, err: 'UNAUTHORIZED' }),
+        404: (res) => ({ ok: false, err: 'not_found'}),
+        401: (res) => ({ ok: false, err: 'unauthorized' }),
     })
 }
 
