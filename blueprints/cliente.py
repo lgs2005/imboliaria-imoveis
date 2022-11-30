@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from http.client import UNAUTHORIZED
 
-from flask import abort, jsonify, Response, make_response, Blueprint
+from flask import abort, jsonify, Response, make_response, Blueprint, request
 from flask_jwt_extended import create_access_token, set_access_cookies, jwt_required, get_jwt, get_jwt_identity, unset_jwt_cookies, JWTManager
 from flask_bcrypt import generate_password_hash, check_password_hash
 
@@ -47,9 +47,11 @@ def route_registrar_cliente():
     db.session.commit()
 
     token = create_access_token(novo_cliente.id)
-    resposta = res_sucesso(novo_cliente.dados())
 
+    resposta = res_sucesso(novo_cliente.dados())
+    #resposta.headers.set('X-new-authorization', token)
     set_access_cookies(resposta, token)
+
     return resposta
 
 
@@ -72,9 +74,11 @@ def rota_logar_cliente():
         abort(UNAUTHORIZED)
     
     token = create_access_token(cliente.id)
+
     resposta = jsonify(cliente.dados())
-    
+    #resposta.headers.set('X-new-authorization', token)
     set_access_cookies(resposta, token)
+
     return resposta
 
 
@@ -116,6 +120,11 @@ def rota_toggle_admin():
     return f'admin: {cliente.admin}', 200
 
 
+@bp.post('/')
+@jwt_required()
+def rota_teste():
+    client = Cliente.atual()
+    return jsonify(client.dados())
 
 jwt = JWTManager()
 
@@ -133,6 +142,7 @@ def refresh_jwt_token(response: Response):
 
         if target_timestamp > expire_timestamp:
             token = create_access_token(get_jwt_identity())
+            #response.headers.set('X-new-authorization', token)
             set_access_cookies(response, token)
 
         return response

@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request
 from modelo import Imovel
 
+from utils import admin_required
+
 
 bp = Blueprint('paginas', __name__)
 
@@ -33,3 +35,8 @@ def page_teste():
 @bp.get('/imovel/<int:id>')
 def page_imovel(id:int):
     return render_template('imovel.html', imovel=Imovel.query.get_or_404(id))
+
+@bp.get('/cadastrar/imovel')
+@admin_required
+def page_cadastrar_imovel():
+    return render_template('adicionar_imovel.html')

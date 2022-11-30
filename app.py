@@ -25,7 +25,8 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     app.config['JWT_SECRET_KEY'] = 'b25aeed15e1a4f3e9837125d8a815b86-casanapraia-2c040adb0beb40cebf4af3276028acee'
-    #app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+    app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+    app.config['JWT_COOKIE_SECURE'] = False
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 
     db.init_app(app)
@@ -34,7 +35,6 @@ def create_app():
         db.session.execute('PRAGMA FOREIGN_KEYS=ON')
 
     blueprints.cliente.jwt.init_app(app)
-    CORS(app)
 
     app.register_blueprint(blueprints.cliente.bp)
     app.register_blueprint(blueprints.pages.bp)

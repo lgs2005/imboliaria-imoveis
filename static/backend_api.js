@@ -1,8 +1,22 @@
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
 function fetch3rd(path, method, data, handlers) {
     let options = {
         method: method,
         credentials: 'include',
+        headers: {
+            'X-CSRF-TOKEN': getCookie('csrf_access_token')
+        },
     };
+
+    // let token = sessionStorage.getItem('auth_token')
+    // if (token !== null) {
+    //     options.headers['Authorization'] = 'Bearer ' + token;
+    // }
 
     if (handlers == undefined) {
         handlers = {}
@@ -10,12 +24,15 @@ function fetch3rd(path, method, data, handlers) {
 
     if (data !== undefined) {
         options.body = JSON.stringify(data)
-        options.headers = {
-            'Content-Type': 'application/json',
-        };
+        options.headers['Content-Type'] = 'application/json';
     }
     
     return fetch(path, options).then(async (response) => {
+
+        // if (response.headers.has('X-new-authorization')) {
+        //     sessionStorage.setItem('auth_token', response.headers.get('X-new-authorization'))
+        // }
+
         if (response.status == 200) {
             if (200 in handlers) {
                 return handlers[200](response);
@@ -62,4 +79,12 @@ async function api_toggleAdmin() {
     await fetch3rd('/api/cliente/toggle-admin', 'POST', undefined, {
         200: (res) => {}
     });
+}
+
+function api_novoImovel(nome, descricao, cidade, bairro, area, quartos, apartamento, quintal) {
+    return fetch3rd(
+        '/api/imovel/',
+        'POST',
+        { nome, descricao, cidade, bairro, area, quartos, apartamento, quintal}
+    )
 }
