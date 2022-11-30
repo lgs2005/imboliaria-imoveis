@@ -1,29 +1,71 @@
 {% extends "layout.html" %}
 
+{% block head %}
+<style>
+    form {
+        display: flex;
+        flex-direction: column;
+
+        padding: 50px 30px;
+    }
+
+    textarea {
+        resize: none;
+        height: 100px;
+    }
+
+    form input, form textarea, form select {
+        margin-bottom: 10px;
+    }
+
+    #form-division {
+        display: flex;
+        flex-direction: row;
+    }
+
+    #form-division * {
+        margin: 10px 10px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
 {% block conteudo %}
 
-<form>
+<form id="imovel_form">
 
-    <input type="text" id="form_nome">
+    <label for="form_nome">Nome</label>
+    <input type="text" id="form_nome" required>
 
-    <input type="text" id="form_descricao">
+    <label for="form_descricao">Descrição</label>
+    <textarea id="form_descricao" required></textarea>
 
-    <select id="form_cidade">
-        <option value="indaial">Indaial</option>
-        <option value="timbo">Timbó</option>
+    <label for="form_cidade">Cidade</label>
+    <select id="form_cidade" required>
+        <option disabled selected value>-- Escolha uma cidade --</option>
+        <option value="Indaial">Indaial</option>
+        <option value="Timbó">Timbó</option>
     </select>
 
-    <select id="form_bairro" disabled>
+    <label for="form_bairro">Bairro</label>
+    <select id="form_bairro" disabled required>
     </select>
 
-    <input type="number" id="form_area">
+    <div id="form-division">
+        <label for="form_area">Área (km2)</label>
+        <input type="number" id="form_area" required>
 
-    <input type="number" id="form_quartos">
+        <label for="form_quartos">Quartos</label>
+        <input type="number" id="form_quartos" required>
+    
+        <label for="form_apartamento">Apartamento?</label>
+        <input type="checkbox" id="form_apartamento">
+    
+        <label for="form_quintal">Quintal?</label>
+        <input type="checkbox" id="form_quintal">
+    </div>
 
-    <input type="checkbox" id="form_apartamento">
-
-    <input type="checkbox" id="form_quintal">
-
+    <input type="submit" value="Cadastrar!">
 </form>
 
 
@@ -33,8 +75,65 @@
 
 <script>
 
+    $('#form_cidade').on('change', function() {
+        let cidade = $('#form_cidade > option:selected').val()
+        let bairros;
 
+        if (cidade == 'Indaial') {
+            // nem tem bairro cara
+            // gente eu moro aqui e só lembro quatro bairros
+            // DESDE QUANDO ARAPONGAS EXISTE ???
+            // ESTRADINHA????????????????? :skull:
+            bairros = [
+                'Warnow', 'Ribeirão das Pedras', 'Estrada das Areias', 'Mulde',
+                'Arapongas', 'Carijós', 'Centro', 'Encano', 'Encano do Norte', 'Estados', 
+                'Estradinha', 'João Paulo II', 'Nações', 'Polaquia', 'Rio Morto', 'Sol', 'Tapajós'
+            ]
+        } else if (cidade == 'Timbó') {
+            // quintino bocaiúva
 
+            bairros = [
+                'Mulde Alta', 'Mulde Baixa', 'Mulde Central', 'Fritz Lorenz', 'Araponguinhas',
+                'Estados', 'Padre Martinho Stein', 'Dona Clara', 'Tiroleses', 'Capitais',
+                'Centro', 'Imigrantes', 'Nações', 'Cedrinho', 'São Roque', 'Pomeranos',
+                'Quintino Bocaiúva', 'Vila Germer', 
+            ]
+        }
+
+        $('#form_bairro').html('')
+        $('#form_bairro').append('<option disabled selected value>--Escolha um bairro --</option>')
+        
+        for (let bairro of bairros) {
+            $('#form_bairro').append(
+                `<option value=${bairro}>${bairro}</option>`
+            )
+        }
+
+        $('#form_bairro').attr('disabled', false)
+    })
+
+    $('#imovel_form').on('submit', function(ev) {
+        ev.preventDefault();
+
+        let nome = $('#form_nome').val()
+        let descricao = $('#form_descricao').val()
+        let cidade = $('#form_cidade').val()
+        let bairro = $('#form_bairro').val()
+        let area = parseInt($('#form_area').val())
+        let quartos = parseInt($('#form_quartos').val())
+        let apartamento = $('#form_apartamento').prop('checked')
+        let quintal = $('#form_quintal').prop('checked')
+
+        api_novoImovel(nome, descricao, cidade, bairro, area, quartos, apartamento, quintal).then(
+            (res) => {
+                window.location.pathname = '/imovel/' + res.id
+            },
+
+            (err) => {
+                alert('Não foi possível cadastrar neste momento.')
+            }
+        )
+    })
 </script>
 
 {% endblock %}
