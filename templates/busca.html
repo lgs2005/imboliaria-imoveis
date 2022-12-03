@@ -14,18 +14,38 @@
         width: 200px;
     }
     
+    #form_busca {
+        display: flex;
+        flex-direction: column;
+        padding: 20px 10px;
+    }
+
     #busca_resultado {
         flex-grow: 1;
         overflow-y: scroll;
         
         display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
+        flex-direction: column;
     }
 
-    #form_busca {
+    #paginador {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    #paginador * {
+        margin: 10px 20px;;
+    }
+
+    #paginador button {
+        border: none;
+    }
+
+    #resultados {
+        flex-grow: 1;
+        flex-direction: row;
+        flex-wrap: wrap;
     }
 
     .item {
@@ -55,65 +75,22 @@
             </select>
             <label for="busca_quartos">Quartos: </label>
             <input type="number" id="busca_quartos" value="1">
-            <label for="busca_apt">Apartamento? </label>
-            <input type="checkbox" id="busca_apt">
-            <label for="busca_quintal">Quintal? </label>
-            <input type="checkbox" id="busca_quintal">
+            <label for="busca_apt"><input type="checkbox" id="busca_apt"> Apartamento?</label>
+            <label for="busca_quintal"><input type="checkbox" id="busca_quintal"> Quintal?</label>
             <input type="submit" value="Buscar">
         </form>
     </div>
     
     <div id="busca_resultado">
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
+        <div id="paginador">
+            <button id="pg-anterior"> << </button>
+            <div id="texto-paginas"> Página 0/0 </div>
+            <button id="pg-proxima"> >> </button>
+        </div>
+
+        <div id="resultados">
+
+        </div>
     </div>
 </div>
 
@@ -122,8 +99,40 @@
 {% block script %}
 
 <script>
+    let dados_ultima_busca;
+    let pagina = 1;
+    let paginasTotal;
+
+    function atualizarBusca() {
+        api_busca(pagina, dados_ultima_busca).then(
+            (res) => {
+                console.log(res)
+                let paginasTotal = res.total;
+                $('#texto-paginas').text('Página ' + pagina + '/' + paginasTotal)
+
+                for (let item in res.dados) {
+
+                }
+            },
+
+            (err) => {
+                alert(err)
+            }
+        );
+    }
+
     $('#form_busca').on('submit', function(ev) {
         ev.preventDefault();
+
+        let cidade = $('#busca_cidade').val();
+        let bairro = $('#busca_bairro').val();
+        let quartos_min = parseInt($('#busca_quartos').val());
+        let apt = $('#busca_apt').prop('checked');
+        let quintal = $('#busca_quintal').prop('checked');
+        let preco_max = 100000000;
+
+        dados_ultima_busca = { cidade, bairro, quartos_min, apt, quintal, preco_max };
+        atualizarBusca();
     })
 
     $('#busca_cidade').on('change', function() {

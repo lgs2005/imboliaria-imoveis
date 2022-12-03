@@ -13,26 +13,20 @@ function fetch3rd(path, method, data, handlers) {
         },
     };
 
-    // let token = sessionStorage.getItem('auth_token')
-    // if (token !== null) {
-    //     options.headers['Authorization'] = 'Bearer ' + token;
-    // }
-
     if (handlers == undefined) {
         handlers = {}
     }
 
     if (data !== undefined) {
-        options.body = JSON.stringify(data)
-        options.headers['Content-Type'] = 'application/json';
+        if (method === 'GET') {
+            path = path + '?' + new URLSearchParams(data);
+        } else {
+            options.body = JSON.stringify(data)
+            options.headers['Content-Type'] = 'application/json';
+        }
     }
     
     return fetch(path, options).then(async (response) => {
-
-        // if (response.headers.has('X-new-authorization')) {
-        //     sessionStorage.setItem('auth_token', response.headers.get('X-new-authorization'))
-        // }
-
         if (response.status == 200) {
             if (200 in handlers) {
                 return handlers[200](response);
@@ -86,5 +80,13 @@ function api_novoImovel(nome, descricao, cidade, bairro, area, quartos, apartame
         '/api/imovel/',
         'POST',
         { nome, descricao, cidade, bairro, area, quartos, apartamento, quintal}
+    )
+}
+
+function api_busca(pagina, dados) {
+    return fetch3rd(
+        '/api/busca/',
+        'GET',
+        {...dados, page: pagina}
     )
 }
