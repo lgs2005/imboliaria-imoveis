@@ -36,7 +36,13 @@ def page_teste():
 def page_imovel(id:int):
     return render_template('imovel.html', imovel=Imovel.query.get_or_404(id))
 
+
 @bp.get('/cadastrar/imovel')
 @admin_required
 def page_cadastrar_imovel():
     return render_template('adicionar_imovel.html')
+
+
+@bp.get('/busca')
+def page_busca_imoveis():
+    return render_template('busca.html')

@@ -1,0 +1,171 @@
+{% extends "layout.html" %}
+
+{% block head %}
+
+<style>
+    #layout-container {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        overflow: hidden;
+    }
+
+    #menu_busca {
+        width: 200px;
+    }
+    
+    #busca_resultado {
+        flex-grow: 1;
+        overflow-y: scroll;
+        
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    #form_busca {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .item {
+        margin: 20px 20px;
+        background-color: blue;
+        width: 120px;
+        height: 120px;
+    }
+</style>
+
+{% endblock %}
+
+{% block conteudo %}
+
+<div id="layout-container">
+    <div id="menu_busca">
+        <form id="form_busca">
+            <label for="busca_cidade">Cidade: </label>
+            <select id="busca_cidade">
+                <option selected value="any">Qualquer</option>
+                <option value="Indaial">Indaial</option>
+                <option value="Timbó">Timbó</option>
+            </select>
+            <label for="busca_bairro">Bairro: </label>
+            <select id="busca_bairro" disabled>
+                <option selected value="any">Qualquer</option>
+            </select>
+            <label for="busca_quartos">Quartos: </label>
+            <input type="number" id="busca_quartos" value="1">
+            <label for="busca_apt">Apartamento? </label>
+            <input type="checkbox" id="busca_apt">
+            <label for="busca_quintal">Quintal? </label>
+            <input type="checkbox" id="busca_quintal">
+            <input type="submit" value="Buscar">
+        </form>
+    </div>
+    
+    <div id="busca_resultado">
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+    $('#form_busca').on('submit', function(ev) {
+        ev.preventDefault();
+    })
+
+    $('#busca_cidade').on('change', function() {
+        let cidade = $('#busca_cidade > option:selected').val()
+        let bairros;
+
+        if (cidade == 'Indaial') {
+            // nem tem bairro cara
+            // gente eu moro aqui e só lembro quatro bairros
+            // DESDE QUANDO ARAPONGAS EXISTE ???
+            // ESTRADINHA????????????????? :skull:
+            bairros = [
+                'Warnow', 'Ribeirão das Pedras', 'Estrada das Areias', 'Mulde',
+                'Arapongas', 'Carijós', 'Centro', 'Encano', 'Encano do Norte', 'Estados', 
+                'Estradinha', 'João Paulo II', 'Nações', 'Polaquia', 'Rio Morto', 'Sol', 'Tapajós'
+            ]
+        } else if (cidade == 'Timbó') {
+            // quintino bocaiúva
+
+            bairros = [
+                'Mulde Alta', 'Mulde Baixa', 'Mulde Central', 'Fritz Lorenz', 'Araponguinhas',
+                'Estados', 'Padre Martinho Stein', 'Dona Clara', 'Tiroleses', 'Capitais',
+                'Centro', 'Imigrantes', 'Nações', 'Cedrinho', 'São Roque', 'Pomeranos',
+                'Quintino Bocaiúva', 'Vila Germer', 
+            ]
+        }
+
+        $('#busca_bairro').html('')
+        $('#busca_bairro').append('<option selected value="any">Qualquer</option>')
+        
+        if (cidade != 'any') {
+            for (let bairro of bairros) {
+                $('#busca_bairro').append(
+                    `<option value=${bairro}>${bairro}</option>`
+                )
+            }
+    
+            $('#busca_bairro').attr('disabled', false)
+        } else {
+            $('#busca_bairro').attr('disabled', true);
+        }
+    });
+</script>
+
+{% endblock %}

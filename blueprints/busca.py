@@ -17,14 +17,11 @@ def rota_busca():
         preco_max: int
         cidade: str - 'any' para qualquer cidade
         bairro: str - 'any' para qualquer bairro
-        tamanho_min: int
-        tamanho_max: int
         quartos_min: int
     '''
     apt, quintal = get_json_fields(int, 'apt', 'quintal')
     preco_max = get_json_fields(int, 'preco_max')
     cidade, bairro = get_json_fields(str, 'cidade', 'bairro')
-    tamanho_min, tamanho_max = get_json_fields(int, 'tamanho_min', 'tamanho_max')
     quartos_min = get_json_fields(int, 'quartos_min')
 
     query = Venda.query\
@@ -44,8 +41,6 @@ def rota_busca():
     if bairro != 'any':
         query = query.filter_by(bairro=bairro)
 
-    query = query.filter(Imovel.area >= tamanho_min)
-    query = query.filter(Imovel.area <= tamanho_max)
     query = query.filter(Imovel.quartos >= quartos_min)
 
     vendas = query.all()
