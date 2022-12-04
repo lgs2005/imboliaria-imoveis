@@ -49,11 +49,26 @@
     }
 
     .item {
-        margin: 20px 20px;
-        background-color: blue;
-        width: 120px;
-        height: 120px;
+        display: flex;
+        flex-direction: row;
+        margin: 10px;
+        align-items: center;
+        border: 1px solid black;
     }
+
+    .item img {
+        height: 60px;
+        width: 60px;
+    }
+
+    .item .item-nome {
+        flex-grow: 1;
+    }
+
+    .item p {
+        margin: 0px 10px;
+    }
+
 </style>
 
 {% endblock %}
@@ -77,6 +92,7 @@
             <input type="number" id="busca_quartos" value="1">
             <label for="busca_apt"><input type="checkbox" id="busca_apt"> Apartamento?</label>
             <label for="busca_quintal"><input type="checkbox" id="busca_quintal"> Quintal?</label>
+            <label for="busca_venda"><input type="checkbox" id="busca_venda"> A venda?</label>
             <input type="submit" value="Buscar">
         </form>
     </div>
@@ -106,12 +122,27 @@
     function atualizarBusca() {
         api_busca(pagina, dados_ultima_busca).then(
             (res) => {
-                console.log(res)
                 let paginasTotal = res.total;
                 $('#texto-paginas').text('Página ' + pagina + '/' + paginasTotal)
+                $('#resultados').children().remove();
 
-                for (let item in res.dados) {
-
+                for (let item of res.dados) {
+                    $('#resultados').append(`
+                        <div class="item" data-id-imovel="${item.id}">
+                            <img src="/img/${item.imagem}">
+                            <p class="item-nome">${item.nome}</p>
+                            ${item.venda != null
+                                ? `
+                                    <p>R$${item.venda.preco}.00</p>
+                                    <p>${item.venda.tipo}</p>
+                                `
+                                : `
+                                    <p>N/A</p>
+                                    <p>N/A</p>
+                                `
+                            }
+                        </div>
+                    `);
                 }
             },
 
@@ -121,6 +152,24 @@
         );
     }
 
+    $('#pg-proxima').on('click', function() {
+        if (pagina != paginasTotal) {
+            pagina += 1;
+            atualizarBusca();
+        }
+    })
+
+    $('#pg-anterior').on('click', function() {
+        if (pagina != 1) {
+            pagina -= 1;
+            atualizarBusca();
+        }
+    })
+
+    $(document).on('click', '.item', function() {
+        window.location.pathname = '/imovel/' + $(this).attr('data-id-imovel');
+    })
+
     $('#form_busca').on('submit', function(ev) {
         ev.preventDefault();
 
@@ -129,9 +178,10 @@
         let quartos_min = parseInt($('#busca_quartos').val());
         let apt = $('#busca_apt').prop('checked');
         let quintal = $('#busca_quintal').prop('checked');
-        let preco_max = 100000000;
+        let venda = $('#busca_venda').prop('checked');
 
-        dados_ultima_busca = { cidade, bairro, quartos_min, apt, quintal, preco_max };
+        dados_ultima_busca = { cidade, bairro, quartos_min, apt, quintal, venda };
+        pagina = 1;
         atualizarBusca();
     })
 

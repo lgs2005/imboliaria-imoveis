@@ -56,6 +56,10 @@
         border: 1px solid black;
         margin: 10px;
     }
+    
+    #container_venda {
+        padding: 10px 20px;
+    }
 </style>
 
 {% endblock %}
@@ -181,18 +185,18 @@
                 <h2>Histórico de alugel</h2>
                 <br>
                 <table id="alugel_historico">
-                    <thead>
+                    <tr>
                         <th>Cliente</th>
                         <th>Início</th>
                         <th>Fim</th>
-                    </thead>
-                    <tbody>
+                    </tr>
                     {% for alugel in imovel.venda.alugeis %}
-                        <td>{{ alugel.cliente.nome }}</td>
-                        <td>{{ alugel.data }}</td>
-                        <td>{{ alugel.data_fim }}</td>
+                        <tr>
+                            <td>{{ alugel.cliente.nome }}</td>
+                            <td>{{ alugel.data }}</td>
+                            <td>{{ alugel.data_fim }}</td>
+                        </tr>
                     {% endfor %}
-                    </tbody>
                 </table>
                 <br>
                 <button id="finalizar_alugel">Finalizar alugel atual.</button>

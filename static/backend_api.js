@@ -120,7 +120,8 @@ function api_comprarImovel(imovel) {
 
 function api_alugarImovel(imovel) {
     let future = new Date();
-    future.setDate(future.getDate() + 30);
+    //future.setDate(future.getDate() + 30);
+    future.setSeconds(future.getSeconds() + 5);
 
     return fetch3rd(
         '/api/alugel/' + imovel + '/alugar',

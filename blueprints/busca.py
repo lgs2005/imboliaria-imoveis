@@ -20,21 +20,20 @@ def rota_busca():
         bairro: str - 'any' para qualquer bairro
         quartos_min: int
     '''
-    apt, quintal = get_arg_fields(bool, 'apt', 'quintal')
-    preco_max = get_arg_fields(int, 'preco_max')
+    apt, quintal, venda = get_arg_fields(bool, 'apt', 'quintal', 'venda')
     cidade, bairro = get_arg_fields(str, 'cidade', 'bairro')
     quartos_min = get_arg_fields(int, 'quartos_min')
 
-    query = Venda.query\
-        .filter(Venda.tipo != 'realizada')\
-        .filter(Venda.preco <= preco_max)\
-        .join(Venda.imovel)
+    query = Imovel.query
 
     if apt:
         query = query.filter(Imovel.apartamento == True)
     
     if quintal:
         query = query.filter(Imovel.quintal == True)
+
+    if venda:
+        query = query.filter(Imovel.venda != None).join(Imovel.venda).filter(Venda.tipo != 'realizada')
 
     if cidade != 'any':
         query = query.filter(Imovel.cidade == cidade)
@@ -43,13 +42,17 @@ def rota_busca():
         query = query.filter(Imovel.bairro == bairro)
 
     query = query.filter(Imovel.quartos >= quartos_min)
-    vendas: Pagination = query.paginate(max_per_page=20)
+    imoveis: Pagination = query.paginate(max_per_page=20)
     
     response = {
-        'total': vendas.pages,
+        'total': imoveis.pages,
         'dados': [
-            v.dados()
-            for v in vendas.items
+            {
+                **im.dados(),
+                'imagem': im.imagens[0].arquivo if len(im.imagens) > 0 else 'noimg',
+                'venda': im.venda.dados() if im.venda != None else None,
+            }
+            for im in imoveis.items
         ]
     }
 
