@@ -56,14 +56,14 @@ def alterar_imovel(id:int):
 
             imovel.__setattr__(f, dados[f])
 
-    update('nome', str)
-    update('descricao', str)
-    update('cidade', str)
-    update('bairro', str)
-    update('area', int)
-    update('quartos', int)
-    update('apartamento', bool)
-    update('quintal', bool)
+    update(            'nome',              str             )
+    update(          'descricao',         str             )
+    update(           'cidade',            str             )
+    update(           'bairro',            str             )
+    update(            'area',              int             )
+    update(           'quartos',           int             )
+    update(         'apartamento',       bool            )
+    update(           'quintal',           bool            )
 
     db.session.commit()
     return jsonify(imovel.dados())

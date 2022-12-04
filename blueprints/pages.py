@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request
-from modelo import Imovel
+from flask import Blueprint, render_template, request, g
+from flask_jwt_extended import jwt_required
 
+from modelo import Imovel, Cliente
 from utils import admin_required
 
 
@@ -37,12 +38,28 @@ def page_imovel(id:int):
     return render_template('imovel.html', imovel=Imovel.query.get_or_404(id))
 
 
-@bp.get('/cadastrar/imovel')
+@bp.get('/editar')
 @admin_required
 def page_cadastrar_imovel():
-    return render_template('adicionar_imovel.html')
+    return render_template('editar_imovel.html')
+
+
+@bp.get('/editar/<int:id>')
+@admin_required
+def page_editar_imovel(id:int):
+    return render_template('editar_imovel.html', imovel=Imovel.query.get_or_404(id))
 
 
 @bp.get('/busca')
 def page_busca_imoveis():
     return render_template('busca.html')
+
+
+@bp.before_request
+@jwt_required(optional=True)
+def add_admin_to_context():
+    try:
+        cliente = Cliente.atual()
+        g.admin = cliente.admin
+    except Exception:
+        g.admin = False

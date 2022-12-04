@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify
 from flask_sqlalchemy.pagination import Pagination
 
 from modelo import Imovel, Venda
-from utils import get_arg_fields, get_json_fields
+from utils import get_arg_fields
 
 
 bp = Blueprint('busca', __name__, url_prefix='/api/busca')

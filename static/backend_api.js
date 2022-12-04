@@ -75,11 +75,19 @@ async function api_toggleAdmin() {
     });
 }
 
-function api_novoImovel(nome, descricao, cidade, bairro, area, quartos, apartamento, quintal) {
+function api_novoImovel(dados) {
     return fetch3rd(
         '/api/imovel/',
         'POST',
-        { nome, descricao, cidade, bairro, area, quartos, apartamento, quintal}
+        dados
+    )
+}
+
+function api_alterarImovel(id, dados) {
+    return fetch3rd(
+        '/api/imovel/' + id,
+        'PATCH',
+        dados,
     )
 }
 

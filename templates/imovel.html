@@ -3,20 +3,88 @@
 {% block head %}
 
 <style>
+    #container_descricao {
+        display: flex;
+        flex-direction: row;
+    }
 
+    #descricao {
+        flex-grow: 1;
+        padding: 0 20px;
+    }
+
+    #dados {
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid gray;
+    }
+
+    #dados div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    #dados div p {
+        margin: 5px 40px;
+    }
+
+    h1 {
+        padding: 0 20px;
+    }
 </style>
 
 {% endblock %}
 
 {% block conteudo %}
 
-    Nome: {{ imovel.nome }} <br>
-    Descrição: {{ imovel.descricao }} <br>
-    Cidade: {{ imovel.cidade }} <br>
-    Bairro: {{ imovel.bairro }} <br>
+<h1>{{ imovel.nome }}</h1>
+<hr>
+<img src="">
+<hr>
+<div id="container_descricao">
+    <p id="descricao">{{ imovel.descricao }}</p>
 
+    <div id="dados">
+        <div>
+            <p>Cidade: </p>
+            <p>{{ imovel.cidade }}</p>
+        </div>
+        <div>
+            <p>Bairro: </p>
+            <p>{{ imovel.bairro }}</p>
+        </div>
+        <div>
+            <p>Área: </p>
+            <p>{{ imovel.area }}</p>
+        </div>
+        <div>
+            <p>Quartos: </p>
+            <p>{{ imovel.quartos }}</p>
+        </div>
+        <div>
+            <p>Apartamento? </p>
+            <p>{{ 'Sim' if imovel.apartamento else 'Não' }}</p>
+        </div>
+        <div>
+            <p>Quintal? </p>
+            <p>{{ 'Sim' if imovel.quintal else 'Não' }}</p>
+        </div>
+    </div>
+</div>
+<hr>
 
+<div id="container_venda">
+    {% if imovel.venda == None %}
+        <p>Este imóvel não está a venda.</p>
+    {% else %}
+        <p>Este imóvel está a venda.</p>
+    {% endif %}
+</div>
 
+{% if g.admin %}
+    <a id="controle-admin" href="/editar/{{ imovel.id }}">Editar imóvel</a>
+{% endif %}
 
 
 {% endblock %}
