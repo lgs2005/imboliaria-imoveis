@@ -21,8 +21,12 @@ function fetch3rd(path, method, data, handlers) {
         if (method === 'GET') {
             path = path + '?' + new URLSearchParams(data);
         } else {
-            options.body = JSON.stringify(data)
-            options.headers['Content-Type'] = 'application/json';
+            if (data instanceof FormData) {
+                options.body = data;
+            } else {
+                options.body = JSON.stringify(data)
+                options.headers['Content-Type'] = 'application/json';
+            }
         }
     }
     
@@ -111,5 +115,37 @@ function api_comprarImovel(imovel) {
     return fetch3rd(
         '/api/venda/' + imovel + '/comprar',
         'POST'
+    )
+}
+
+function api_alugarImovel(imovel) {
+    let future = new Date();
+    future.setDate(future.getDate() + 30);
+
+    return fetch3rd(
+        '/api/alugel/' + imovel + '/alugar',
+        'POST',
+        { data_fim: future.toISOString() }
+    );
+}
+
+function api_finalizarAlugel(imovel) {
+    return fetch3rd(
+        '/api/alugel/' + imovel + '/devolver',
+        'POST',
+        undefined,
+        {
+            200: () => true,
+            409: () => false,
+        }
+    );
+}
+
+function api_adicionarImagem(imovel, formData) {
+    return fetch3rd(
+        '/img/' + imovel + '/add',
+        'POST',
+        formData,
+        { 200: () => {} }
     )
 }

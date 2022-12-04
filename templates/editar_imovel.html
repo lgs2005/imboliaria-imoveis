@@ -27,6 +27,19 @@
         margin: 10px 10px;
         margin-bottom: 20px;
     }
+
+    #galeria {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    #galeria img {
+        width: 250px;
+        height: 250px;
+        border: 1px solid black;
+        margin: 10px;
+    }
 </style>
 {% endblock %}
 
@@ -69,6 +82,34 @@
 
     <input type="submit" value="{{ 'Atualizar!' if imovel else 'Cadastrar!' }}">
 </form>
+
+{% if imovel %}
+    <h1>Imagens</h1>
+
+    <div id="galeria">
+        {% for imagem in imovel.imagens %}
+            <img src="/img/{{ imagem.arquivo }}">
+        {% endfor %}
+    </div>
+
+    <form id="form_imagem">
+        <label for="adicionar_imagens">Adicionar Imagem: </label>
+        <input id="adicionar_imagens" type="file" name="file" accept=".png,.jpg,.jpeg,.gif">
+        <input type="submit" value="Enviar">
+    </form>
+
+    <script>
+        $('#form_imagem').on('submit', function(ev) {
+            ev.preventDefault();
+            let data = new FormData($('#form_imagem').get(0));
+    
+            api_adicionarImagem('{{ imovel.id }}', data).then(
+                (res) => window.location.reload(),
+                (err) => alert(err),
+            );
+        })
+    </script>
+{% endif %}
 
 
 {% endblock %}

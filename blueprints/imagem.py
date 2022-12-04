@@ -24,7 +24,7 @@ def rota_adicionar_imagem(id:int):
 
     ext = img.filename.rsplit('.', 1)[1].lower()
 
-    if ext not in ['png', 'jpg', 'jpeg']:
+    if ext not in ['png', 'jpg', 'jpeg', 'gif']:
         abort(BAD_REQUEST)
 
     img_name = imagedb.new_entry()
@@ -34,13 +34,13 @@ def rota_adicionar_imagem(id:int):
 
     cadastro = Imagem(
         imovel=imovel,
-        arquivo=img_name,
+        arquivo=filename,
     )
 
     db.session.add(cadastro)
     db.session.commit()
 
-    return img_name
+    return filename
 
 
 @bp.get('/<int:id>/list')

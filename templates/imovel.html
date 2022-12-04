@@ -32,6 +32,30 @@
     h1 {
         padding: 0 20px;
     }
+
+    table th {
+        padding: 0px 20px;
+    }
+
+    table td {
+        border-top: 1px solid black;
+        border-bottom: 1px solid black;
+        min-width: 150px;
+        padding: 0px 20px;
+    }
+
+    #galeria {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    #galeria img {
+        width: 250px;
+        height: 250px;
+        border: 1px solid black;
+        margin: 10px;
+    }
 </style>
 
 {% endblock %}
@@ -40,7 +64,11 @@
 
 <h1>{{ imovel.nome }}</h1>
 <hr>
-<img src="">
+<div id="galeria">
+    {% for imagem in imovel.imagens %}
+        <img src="/img/{{ imagem.arquivo }}">
+    {% endfor %}
+</div>
 <hr>
 <div id="container_descricao">
     <p id="descricao">{{ imovel.descricao }}</p>
@@ -138,21 +166,57 @@
                 <p>Este imóvel já está alugado no momento.</p>
             {% else %}
                 <p>Este imóvel pode ser alugado no momento.</p>
-                <button>Alugar.</button>
+                <button id="alugar_imovel">Alugar.</button>
+                <script>
+                    $('#alugar_imovel').on('click', function() {
+                        api_alugarImovel('{{ imovel.id }}').then(
+                            (res) => window.location.reload(),
+                            (err) => alert(err)
+                        );
+                    });
+                </script>
             {% endif %}
 
             {% if g.admin %}
                 <h2>Histórico de alugel</h2>
-                <div id="alugel_historico">
-
-                </div>
-                <button>Finalizar alugel atual.</button>
+                <br>
+                <table id="alugel_historico">
+                    <thead>
+                        <th>Cliente</th>
+                        <th>Início</th>
+                        <th>Fim</th>
+                    </thead>
+                    <tbody>
+                    {% for alugel in imovel.venda.alugeis %}
+                        <td>{{ alugel.cliente.nome }}</td>
+                        <td>{{ alugel.data }}</td>
+                        <td>{{ alugel.data_fim }}</td>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <br>
+                <button id="finalizar_alugel">Finalizar alugel atual.</button>
+                <script>
+                    $('#finalizar_alugel').on('click', function() {
+                        api_finalizarAlugel('{{ imovel.id }}').then(
+                            (res) => {
+                                if (res) {
+                                    window.location.reload();
+                                } else {
+                                    alert('Ainda não é possível finalizar este alugel.');
+                                }
+                            },
+                            (err) => alert
+                        );
+                    })
+                </script>
             {% endif %}
         {% endif %}
     {% endif %}
 </div>
 
 {% if g.admin %}
+    <br>
     <a id="controle-admin" href="/editar/{{ imovel.id }}">Editar dados do imóvel</a>
 {% endif %}
 
