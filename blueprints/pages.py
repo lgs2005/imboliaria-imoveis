@@ -60,6 +60,7 @@ def page_busca_imoveis():
 def add_admin_to_context():
     try:
         cliente = Cliente.atual()
+        g.user = cliente
         g.admin = cliente.admin
     except Exception:
         g.admin = False

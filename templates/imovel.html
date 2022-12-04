@@ -75,16 +75,85 @@
 <hr>
 
 <div id="container_venda">
+    <h2>Venda</h2>
     {% if imovel.venda == None %}
         <p>Este imóvel não está a venda.</p>
+
+        {% if g.admin %}
+            <form id="form_venda">
+                <label for="venda_preco">Preço: </label>
+                <input type="number" id="venda_preco" required>
+                <label for="venda_tipo">Tipo: </label>
+                <select id="venda_tipo" required>
+                    <option value="venda">Fixo</option>
+                    <option value="alugel">Aluguel</option>
+                </select>
+                <button> Adicionar venda. </button>
+            </form>
+            <script>
+                $('#form_venda').on('submit', function(ev) {
+                    ev.preventDefault();
+
+                    let tipo = $('#venda_tipo').val();
+                    let preco = parseInt($('#venda_preco').val());
+
+                    api_adicionarVenda('{{ imovel.id }}', tipo, preco).then(
+                        res => {
+                            window.location.reload();
+                        },
+                        err => {
+                            alert(err);
+                        }
+                    );
+                })
+            </script>
+        {% endif %}
     {% else %}
-        <p>Este imóvel está a venda.</p>
+        {% if imovel.venda.tipo == 'venda' %}
+            <p>Este imóvel está a venda por R${{ imovel.venda.preco }}.00</p>
+
+            {% if g.user != None %}
+                <button id="comprar_imovel">Comprar</button>
+                <script>
+                    $('#comprar_imovel').on('click', function(ev) {
+                        api_comprarImovel('{{ imovel.id }}').then(
+                            res => { window.location.reload() },
+                            err => { alert(err) }
+                        );
+                    });
+                </script>
+            {% endif %}
+        {% endif %}
+
+        {% if imovel.venda.tipo == 'realizada' %}
+            {% if g.admin %}
+                <p>Este imóvel foi vendido para {{ imovel.venda.cliente.nome }} por R${{ imovel.venda.preco }}.00</p>
+            {% else %}
+                <p>Este imóvel já foi vendido.</p>
+            {% endif %}
+        {% endif %}
+
+        {% if imovel.venda.tipo == 'alugel' %}
+            {% if imovel.venda.alugado %}
+                <p>Este imóvel já está alugado no momento.</p>
+            {% else %}
+                <p>Este imóvel pode ser alugado no momento.</p>
+                <button>Alugar.</button>
+            {% endif %}
+
+            {% if g.admin %}
+                <h2>Histórico de alugel</h2>
+                <div id="alugel_historico">
+
+                </div>
+                <button>Finalizar alugel atual.</button>
+            {% endif %}
+        {% endif %}
     {% endif %}
 </div>
 
 {% if g.admin %}
-    <a id="controle-admin" href="/editar/{{ imovel.id }}">Editar imóvel</a>
+    <a id="controle-admin" href="/editar/{{ imovel.id }}">Editar dados do imóvel</a>
 {% endif %}
-
 
 {% endblock %}

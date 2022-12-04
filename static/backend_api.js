@@ -98,3 +98,18 @@ function api_busca(pagina, dados) {
         {...dados, page: pagina}
     )
 }
+
+function api_adicionarVenda(imovel, tipo, preco) {
+    return fetch3rd(
+        '/api/venda/' + imovel,
+        'POST',
+        { tipo, preco }
+    )
+}
+
+function api_comprarImovel(imovel) {
+    return fetch3rd(
+        '/api/venda/' + imovel + '/comprar',
+        'POST'
+    )
+}

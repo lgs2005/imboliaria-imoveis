@@ -67,22 +67,6 @@
         <input type="checkbox" id="form_quintal">
     </div>
 
-    <h1>Venda</h1>
-
-    <select id="tipo_venda">
-        <option value="none" select>Indisponível</option>
-        <option value="fixo">Fixo</option>
-        <option value="alugel">Aluguel</option>
-    </select>
-
-    <div id="venda_fixo" class="hidden">
-        <p>fixo</p>
-    </div>
-
-    <div id="venda_alugel" class="hidden">
-        <p>alugel</p>
-    </div>
-
     <input type="submit" value="{{ 'Atualizar!' if imovel else 'Cadastrar!' }}">
 </form>
 
@@ -169,15 +153,6 @@
     }
 
     $('#form_cidade').on('change', atualizarBairros);
-
-    function atualizarMenuVenda() {
-        let tipo = $('#tipo_venda').val();
-        $('#venda_fixo').toggleClass('hidden', tipo != 'fixo');
-        $('#venda_alugel').toggleClass('hidden', tipo != 'alugel');
-    }
-
-    $('#tipo_venda').on('change', atualizarMenuVenda);
-
 </script>
 
 {% if imovel %}
