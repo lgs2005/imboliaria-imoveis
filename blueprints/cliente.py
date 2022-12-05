@@ -102,7 +102,7 @@ def rota_dados_cliente(id:int):
 @jwt_required()
 def rota_deslogar_cliente():
     '''Remove os cookies de login em browsers'''
-    response = make_response(None, 200)
+    response = make_response('', 200)
     unset_jwt_cookies(response)
     return response
 

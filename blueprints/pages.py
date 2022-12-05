@@ -18,21 +18,6 @@ def page_index():
     return render_template('inicio.html')
 
 
-@bp.get('/contato')
-def page_contato():
-    return render_template('contato.html')
-
-
-@bp.get('/sobre')
-def page_sobre():
-    return render_template('sobre.html')
-
-
-@bp.get('/teste')
-def page_teste():
-    return render_template('testing.html')
-
-
 @bp.get('/imovel/<int:id>')
 def page_imovel(id:int):
     return render_template('imovel.html', imovel=Imovel.query.get_or_404(id))

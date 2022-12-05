@@ -7,4 +7,35 @@
 
 {% block conteudo %}
 
+<h1>Imobiliária</h1>
+<p>Não vai ter página inicial dessa vez.</p>
+<p>Use a barra de navegação.</p>
+
+{% if g.user %}
+<br>
+<a id="admin-button" style="color: blue;">Clique aqui para receber permissões de administrador.</a>
+<script>
+    $('#admin-button').on('click', function() {
+        api_toggleAdmin().then(
+            (res) => window.location.reload(),
+            (err) => alert(err),
+        );
+    })
+</script>
+<br>
+<a id="logout-button" style="color: red;">Clique aqui para deslogar</a>
+<script>
+    $('#logout-button').on('click', function() {
+        api_logoutUser().then(
+            (res) => window.location.reload(),
+            (err) => alert(err),
+        );
+    })
+</script>
+{% endif %}
+
+{% if g.admin %}
+<a href="/editar">Adicionar novo imóvel</a>
+{% endif %}
+
 {% endblock %}

@@ -130,7 +130,7 @@ class Alugel(db.Model):
 
 class Imagem(db.Model):
     id:             Mapped[int]             = Column(Integer, primary_key=True)
-    arquivo:        Mapped[str]             = Column(String(32), nullable=False, unique=True)
+    arquivo:        Mapped[str]             = Column(String(64), nullable=False, unique=True)
 
     imovel_id:      Mapped[int]             = Column(ForeignKey(Imovel.id))
     imovel:         Mapped[Imovel]          = db.relationship(Imovel, back_populates='imagens')

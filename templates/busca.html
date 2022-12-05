@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {% block head %}
+<script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
 
 <style>
     #layout-container {
@@ -11,7 +12,7 @@
     }
 
     #menu_busca {
-        width: 200px;
+        width: 400px;
     }
     
     #form_busca {
@@ -95,6 +96,11 @@
             <label for="busca_venda"><input type="checkbox" id="busca_venda"> A venda?</label>
             <input type="submit" value="Buscar">
         </form>
+        <br>
+        <br>
+        <p>Resultados por cidade: </p>
+        <div id="resultados-por-cidade">
+        </div>
     </div>
     
     <div id="busca_resultado">
@@ -122,6 +128,7 @@
     function atualizarBusca() {
         api_busca(pagina, dados_ultima_busca).then(
             (res) => {
+                console.log(res);
                 let paginasTotal = res.total;
                 $('#texto-paginas').text('Página ' + pagina + '/' + paginasTotal)
                 $('#resultados').children().remove();
@@ -144,6 +151,12 @@
                         </div>
                     `);
                 }
+
+                Plotly.newPlot('resultados-por-cidade', [{
+                    x: Object.keys(res.graph_data),
+                    y: Object.values(res.graph_data),
+                    type: 'bar'
+                }]);
             },
 
             (err) => {

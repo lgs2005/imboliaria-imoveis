@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from flask_sqlalchemy.pagination import Pagination
 
-from modelo import Imovel, Venda
+from modelo import Imovel, Venda, db
 from utils import get_arg_fields
 
 
@@ -43,7 +43,11 @@ def rota_busca():
 
     query = query.filter(Imovel.quartos >= quartos_min)
     imoveis: Pagination = query.paginate(max_per_page=20)
-    
+
+    graph_data = {}
+    for im in query.group_by(Imovel.cidade).all():
+        graph_data[im.cidade] = query.filter(Imovel.cidade == im.cidade).count()
+
     response = {
         'total': imoveis.pages,
         'dados': [
@@ -53,7 +57,8 @@ def rota_busca():
                 'venda': im.venda.dados() if im.venda != None else None,
             }
             for im in imoveis.items
-        ]
+        ],
+        'graph_data': graph_data,
     }
 
     return jsonify(response)
